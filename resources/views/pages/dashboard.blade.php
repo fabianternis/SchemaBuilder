@@ -1,0 +1,1 @@
+<h2>Welcome, {{ Auth()->user()->username }}!</h2>
