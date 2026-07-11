@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{PageController, AuthController};
+use App\Http\Controllers\{PageController, AuthController, ProjectController, SchemaController};
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -22,9 +22,13 @@ Route::middleware('auth')->group( function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::resources('projects', ProjectController::class)->name('projects');
+    Route::resource('projects', ProjectController::class);
 
     Route::prefix('schema')->name('schema.')->group( function () {
-        
+        Route::get('/', [SchemaController::class, 'index'])->name('index');
+        Route::get('/{project_slug}', [SchemaController::class, 'showProject'])->name('project');
+        Route::get('/{project_slug}/{database_name}', [SchemaController::class, 'showDatabase'])->name('database');
+        Route::get('/{project_slug}/{database_name}/{table_name}', [SchemaController::class, 'showTable'])->name('table');
+        Route::get('/{project_slug}/{database_name}/{table_name}/{column_name}', [SchemaController::class, 'showColumn'])->name('column');
     });
 });

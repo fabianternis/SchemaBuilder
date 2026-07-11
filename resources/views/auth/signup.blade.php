@@ -1,8 +1,8 @@
-<form action="{{ route('auth.signup') }}" method="post">
-@csrf
-<input type="email" name="email">
-<input type="text" name="username">
-<input type="password" name="password">
-<input type="password" name="password_confirmation">
-<button type="submit"></button>
+<h1>Signup</h1>
+<form action="/signup" method="POST">
+    @csrf
+    <input name="username" placeholder="Username">
+    <input name="email" type="email" placeholder="Email">
+    <input name="password" type="password" placeholder="Password">
+    <button>Signup</button>
 </form>

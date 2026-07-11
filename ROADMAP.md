@@ -14,3 +14,5 @@
 #### 2.1.4 After finishing Auth, I created a one-line message on `pages.dashboard` View
 #### 2.1.5 I did some other, small things
 #### 2.1.6 I prepared the Routing, how i want it to be
+#### 2.1.7 I Prompted gemini to create some simple Controllers and minimalist views based on my routing. Due to me not providing enough context (PromptID: `3`), gemini hallucinated something Schema-related.
+#### 2.1.8 After I snet another Prompt within the same session, the LLM still messed up, so i decided to also do this simple stuff myself.

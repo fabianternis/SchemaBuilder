@@ -1,5 +1,3 @@
-@extends('layouts.app')
-
-@section('content')
-<h1>Hello World!</h1>
-@endsection
+<h1>Home</h1>
+<a href="/login">Login</a>
+<a href="/signup">Signup</a>

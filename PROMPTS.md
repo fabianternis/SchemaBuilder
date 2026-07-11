@@ -9,9 +9,15 @@ PromptID: `1`
 <hr>
 
 [NEW SESSION]
-#### `Review both SCHEMA.md and the migrations and Models. then: based on my SCHEMA.md, update the migrations and models (note taht you may create new Models and migrations). Additionally: Remove all NPM and Node-related stuff (e.g. Vite) from this application, becuase i have no idea and cannot handle debugging it` _// i gave the LLM unneccessary Context about me and NodeJS_
+#### `Review routes/web.php. Based on thr routing, i prepared, create all the Controllers neccessary and some very simple views. Also create the schema-routing.`
 Model: `Gemini 3.5 Pro (High reasoning)`
-PromptID: `2`
+PromptID: `3`
+<hr>
+
+[SESSION Continues]
+#### `I did not provide enough context relating teh schema. I wanted all shcema-related models to be handled within the smae routing-group and Controller (the routes may even be e.g. "/{project_slug}/{database_name}/{table_name}/{column_name}") ... please rework that and update the Controller, routing and the schema-views.`
+Model: `Gemini 3.5 Pro (High reasoning`
+PromptID: `3`
 <hr>
 
 
