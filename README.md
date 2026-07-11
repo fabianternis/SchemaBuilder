@@ -1,4 +1,4 @@
-# SchemaBuilder
+# SchemaBuilder<br><img src="https://hackatime.hackclub.com/api/v1/badge/U0B8JTZDTKQ/fabianternis/SchemaBuilder">
 ## A LaravelPHP Based Web-APP for designing a Database-Schema.
 ### SchemaBuilder is a project for [Macondo](https://macondo.hackclub.com/projects/13022) (a [HackClub](https://hackclub.com) Program)
 

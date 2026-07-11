@@ -14,6 +14,17 @@ Route::get('/dashboard', [PageController::class, 'dashboard'])->name('pages.dash
 
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('auth.login');
-Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+Route::post('/login', [AuthController::class, 'login']);
 Route::get('/signup', [AuthController::class, 'showSignup'])->name('auth.signup');
-Route::post('/signup', [AuthController::class, 'signup'])->name('auth.signup');
+Route::post('/signup', [AuthController::class, 'signup']);
+
+Route::middleware('auth')->group( function () {
+    Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::resources('projects', ProjectController::class)->name('projects');
+
+    Route::prefix('schema')->name('schema.')->group( function () {
+        
+    });
+});

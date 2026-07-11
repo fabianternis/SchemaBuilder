@@ -30,4 +30,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function projects()
+    {
+        // return $this->hasMany(Project::class, 'user_id');
+        return $this->hasMany(Project::class, 'owner_id');
+    }
 }

@@ -26,6 +26,8 @@ class AuthController extends Controller
             return redirect()->route('root'); // will redirect to dashboard ... (due to router-logic)
         }
 
+        $request->session()->regenerate();
+
         return back(); // may set session-errors or sth.
     }
 
@@ -49,6 +51,16 @@ class AuthController extends Controller
         /*// Auth::login($user); // user should re-enter credentials*/
         Auth::login($user);
 
+        $request->session()->regenerate();
+
         return redirect()->route('root');
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
     }
 }
