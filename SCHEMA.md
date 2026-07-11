@@ -40,7 +40,7 @@
 - payload
 - last_activity(index)
 
-### Database (`databases`)
+### Database (`schema_databases`)
 _**note:** A Project can have optionally multiple databases but one is auto-generated on Project-creation._
 - id(uuid/ulid) (AI decided: ulid)
 - project_id(uuid/ulid)
@@ -51,12 +51,12 @@ _**note:** A Project can have optionally multiple databases but one is auto-gene
 - timestamps
 - [(deleted_at)]
 
-### Table (<!--`db_tables`-->`tables`)
+### Table (<!--`db_tables`-->`schema_tables`)
 - id(uuid/ulid)
 - database_id(uuid/ulid)
 - name
 
-### Column (`columns`)
+### Column (`schema_columns`)
 _**thaughts:** maybe a arributes(json) would be better_
 - id(uuid/ulid)
 - table_id(uuid/ulid)
