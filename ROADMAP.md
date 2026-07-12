@@ -15,4 +15,8 @@
 #### 2.1.5 I did some other, small things
 #### 2.1.6 I prepared the Routing, how i want it to be
 #### 2.1.7 I Prompted gemini to create some simple Controllers and minimalist views based on my routing. Due to me not providing enough context (PromptID: `3`), gemini hallucinated something Schema-related.
-#### 2.1.8 After I snet another Prompt within the same session, the LLM still messed up, so i decided to also do this simple stuff myself.
+#### 2.1.8 After I sent another Prompt within the same session, the LLM still messed up, so i decided to also do this simple stuff myself.
+## 3 CRUD (All those numbers make no sense at all ; why did i do that?)
+### 3.1 I created the resource-template views for thze create and index views. Also added 'base_route' to $schema
+### 3.2 I prompted gemini (PromptID: `5`) to continue based on my `$schema` and the resource views.
+### 3.3. I prompted Prompt:`6`

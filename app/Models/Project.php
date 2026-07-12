@@ -27,12 +27,14 @@ class Project extends Model
 
 public $schema = [
         'name' => 'projects',
+        'base_route' => 'projects',
         'columns' => [
             [
                 'name' => 'name',
                 'type' => 'text',
                 'required' => true,
                 'on_index' => true,
+                // 'placeholder' => 'Proje'
             ],
             [
                 'name' => 'slug',
@@ -55,12 +57,6 @@ public $schema = [
             [
                 'name' => 'repo_url',
                 'type' => 'url',
-                'required' => false,
-                'on_index' => false,
-            ],
-            [
-                'name' => 'preferences',
-                'type' => 'json',
                 'required' => false,
                 'on_index' => false,
             ],

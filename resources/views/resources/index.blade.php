@@ -36,4 +36,5 @@ $schema Example
 </table>
 @else
 you seem not to have any {{ $schema['name'] }}s
+<a href="{{ route($schema['base_route'].'.create') }}">Create one</a>
 @endif
