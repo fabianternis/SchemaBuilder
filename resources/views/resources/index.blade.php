@@ -1,4 +1,4 @@
-{{ /*
+{{-- /*
 $schema Example
 [
     'name',
@@ -6,26 +6,34 @@ $schema Example
         'name' => 'something',
         'type' => 'unused',
         'required' => false,
+        'on_index' => true,
     ],
 
 ]
-*/ }}
+*/ --}}
 
-@if(isset($items))
+@if(isset($items) && $items->count() > 0)
 <table>
-    <th>
+    <tr>
         @foreach($schema['columns'] as $column)
-        <td>{{ $column['name'] }}</td>
+        <th>{{ $column['name'] }}</th>
         @endforeach
-    </th>
+    </tr>
     @foreach($items as $item)
     <tr>
         @foreach($schema['columns'] as $column)
-        <td>{{ $item[$column['name']] }}</td>
+            @if($column['on_index'])
+                @if($column['type'] == 'textarea')
+                    {{-- <td>{{ substr($item[$column['name']], 0 , 12) }}</td> --}}
+                    <td>{{ Str::limit($item->{$column['name']}, 12) }}</td>
+                @else
+                    <td>{{ $item->{$column['name']} }}</td>
+                @endif
+            @endif
         @endforeach
     </tr>
     @endforeach
 </table>
 @else
-you seem not to have any {{ $schema['name'] }}schema
+you seem not to have any {{ $schema['name'] }}s
 @endif

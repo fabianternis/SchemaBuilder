@@ -3,10 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\Project;
 class ProjectController extends Controller
 {
-    public function index() { return view('projects.index'); }
+    public function index()
+    {
+        $schema = (new Project())->schema;
+        $items = Project::all();
+
+        return view('resources.index', compact('schema', 'items'));
+    }
+
     public function create() { return view('projects.create'); }
     public function store(Request $request) { return redirect()->route('projects.index'); }
     public function show(string $id) { return view('projects.show', compact('id')); }

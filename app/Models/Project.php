@@ -12,6 +12,8 @@ class Project extends Model
 {
     use HasUlids, SoftDeletes;
 
+    // protected $table = 'projects';
+
     protected $fillable = [
         'owner_id',
         'owner_type',
@@ -21,6 +23,48 @@ class Project extends Model
         'production_url',
         'repo_url',
         'preferences',
+    ];
+
+public $schema = [
+        'name' => 'projects',
+        'columns' => [
+            [
+                'name' => 'name',
+                'type' => 'text',
+                'required' => true,
+                'on_index' => true,
+            ],
+            [
+                'name' => 'slug',
+                'type' => 'text',
+                'required' => false,
+                'on_index' => false,
+            ],
+            [
+                'name' => 'description',
+                'type' => 'textarea',
+                'required' => false,
+                'on_index' => true,
+            ],
+            [
+                'name' => 'production_url',
+                'type' => 'url',
+                'required' => false,
+                'on_index' => false,
+            ],
+            [
+                'name' => 'repo_url',
+                'type' => 'url',
+                'required' => false,
+                'on_index' => false,
+            ],
+            [
+                'name' => 'preferences',
+                'type' => 'json',
+                'required' => false,
+                'on_index' => false,
+            ],
+        ],
     ];
 
     protected $casts = [
