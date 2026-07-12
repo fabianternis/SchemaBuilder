@@ -26,6 +26,8 @@ Route::middleware('auth')->group( function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
     Route::post('/logout', [AuthController::class, 'logout']);
 
+
+    Route::get('/new', [SchemaController::class, 'quickCreate'])->name('new');
     
     Route::name('projects.')->group(function () {
         Route::get('/projects', [ProjectController::class, 'index'])->name('index');
@@ -34,13 +36,14 @@ Route::middleware('auth')->group( function () {
             Route::get('/create', [ProjectController::class, 'create'])->name('create');
             Route::post('/', [ProjectController::class, 'store'])->name('store');
             Route::get('/{project_slug}/edit', [ProjectController::class, 'edit'])->name('edit');
-            Route::get('/{project_slug}/show', [ProjectController::class, 'show'])->name('show');
+            Route::get('/{project_slug}/show', function () { return redirect()->route('schema.project'); })->name('show');
             Route::put('/{project_slug}', [ProjectController::class, 'update'])->name('update');
             Route::delete('/{project_slug}', [ProjectController::class, 'destroy'])->name('destroy');
         });
     });
 
     Route::name('schema.')->group( function () {
+        Route::post('/new', [SchemaController::class, 'quickStore'])->name('storeNew');
         Route::get('/{project_slug}', [SchemaController::class, 'showProject'])->name('project');
         Route::get('/{project_slug}/{database_name}', [SchemaController::class, 'showDatabase'])->name('database');
         Route::get('/{project_slug}/{database_name}/{table_name}', [SchemaController::class, 'showTable'])->name('table');
