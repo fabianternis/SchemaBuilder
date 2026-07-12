@@ -18,6 +18,12 @@ $schema Example
         @foreach($schema['columns'] as $column)
         <th>{{ $column['name'] }}</th>
         @endforeach
+        {{--
+        <th><a href="{{ route($schema['base_route'].'.show') }}">Show</a></th>
+        <th><a href="{{ route($schema['base_route'].'.edit') }}">Edit</a></th>
+        <th>DELETE (not for now)</th>
+        --}}
+        <th>Actions</th>
     </tr>
     @foreach($items as $item)
     <tr>
@@ -31,6 +37,8 @@ $schema Example
                 @endif
             @endif
         @endforeach
+
+        <td><a href="{{ route($schema['base_route'].'.show', $item->id) }}">Show</a> <a href="{{ route($schema['base_route'].'.edit', $item->id) }}">Edit</a> <a>DELETE</a></td>
     </tr>
     @endforeach
 </table>
