@@ -29,10 +29,38 @@ class SchemaController extends Controller
         return view('schema.database', compact(['project', 'database']));
     }
 
-    public function showTable(string $project_slug, string $database_name, string $table_name) {
-        $project  = Project::where('slug', $project_slug)->where('owner_id', Auth()->id())->firstOrFail();
-        $database = Database::where('name', $database_name)->where('project_id', $project->id)->firstOrFail();
-        $table    = Table::where('name', $table_name)->where('database_id', $database->id)->firstOrFail();
+    public function createTable(Project $project, Database $database)
+    {
+        return view('schema.table.create', compact([$project, $database]));
+    }
+
+    public function storeTable(Request $request, Project $project, Database $database)
+    {
+        $data = $request->validate([
+            'name' => 'required|string',
+        ]);
+
+
+        $baseName = $data['name'];
+        $name = $baseName;
+        $counter = 1;
+
+        while (Table::where('name', $name)->exists()) {
+            $name = $baseName . '_' . $counter++;
+        }
+
+        $table = Table::create([
+            'database_id' => $database->id,
+            'name' => $data['name'],
+        ]);
+
+        return redirect()->route('schema.table', compact(['project', 'database', 'table']));
+    }
+
+    public function showTable(Project $project, Database $database, Table $table) {
+        // $project  = Project::where('slug', $project_slug)->where('owner_id', Auth()->id())->firstOrFail();
+        // $database = Database::where('name', $database_name)->where('project_id', $project->id)->firstOrFail();
+        // $table    = Table::where('name', $table_name)->where('database_id', $database->id)->firstOrFail();
 
         // Eager-load columns with their referenced table info
         $table->load(['columns.referencedTable']);
@@ -43,11 +71,11 @@ class SchemaController extends Controller
         return view('schema.table', compact('project', 'database', 'table', 'allTables'));
     }
 
-    public function showColumn(string $project_slug, string $database_name, string $table_name, string $column_name) {
-        $project  = Project::where('slug', $project_slug)->where('owner_id', Auth()->id())->firstOrFail();
-        $database = Database::where('name', $database_name)->where('project_id', $project->id)->firstOrFail();
-        $table    = Table::where('name', $table_name)->where('database_id', $database->id)->firstOrFail();
-        $column   = Column::where('name', $column_name)->where('table_id', $table->id)->firstOrFail();
+    public function showColumn(Project $project, Database $database, Table $table, Column $column) {
+        // $project  = Project::where('slug', $project_slug)->where('owner_id', Auth()->id())->firstOrFail();
+        // $database = Database::where('name', $database_name)->where('project_id', $project->id)->firstOrFail();
+        // $table    = Table::where('name', $table_name)->where('database_id', $database->id)->firstOrFail();
+        // $column   = Column::where('name', $column_name)->where('table_id', $table->id)->firstOrFail();
 
         // Sibling columns (for context)
         $table->load('columns');

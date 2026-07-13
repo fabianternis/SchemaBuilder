@@ -745,7 +745,7 @@ dialog::backdrop {
 //  DATA: seed initial state from server-rendered Blade data
 // ============================================================
 const CSRF      = document.querySelector('meta[name="csrf-token"]').content;
-const SAVE_URL  = @json(route('schema.table.update', [$project->slug, $database->name, $table->name]));
+const SAVE_URL  = {{ route('schema.table.update', [$project, $database, $table]) }};
 const ALL_TABLES = @json($allTables->map(fn($t) => ['id' => $t->id, 'name' => $t->name]));
 
 const COLUMN_TYPES = [
@@ -758,7 +758,7 @@ const COLUMN_TYPES = [
 ];
 
 // Seed columns from server
-let columns = @json($table->columns->map(fn($c) => [
+let columns = {{ \Illuminate\Support\Js::from($table->columns->map(fn($c) => [
     'id'                  => $c->id,
     'name'                => $c->name,
     'type'                => $c->type,
@@ -770,7 +770,7 @@ let columns = @json($table->columns->map(fn($c) => [
     'length'              => $c->length,
     'on_cascade'          => $c->on_cascade,
     'referenced_table_id' => $c->referenced_table_id,
-]));
+])) }};
 
 let tableName = @json($table->name);
 let lastSavedJson = JSON.stringify(buildPayload());

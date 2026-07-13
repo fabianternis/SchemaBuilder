@@ -46,6 +46,8 @@ Route::middleware('auth')->group( function () {
         Route::post('/new', [SchemaController::class, 'quickStore'])->name('storeNew');
         Route::get('/{project:slug}', [SchemaController::class, 'showProject'])->name('project');
         Route::get('/{project:slug}/{database:name}', [SchemaController::class, 'showDatabase'])->name('database');
+        Route::get('/{project:slug}/{database:name}/new', [SchemaController::class, 'createTable'])->name('table.create');
+        Route::post('/{project:slug}/{database:name}/new', [SchemaController::class, 'storeTable'])->name('table.store');
         Route::get('/{project:slug}/{database:name}/{table:name}', [SchemaController::class, 'showTable'])->name('table');
         Route::get('/{project:slug}/{database:name}/{table:name}/{column:name}', [SchemaController::class, 'showColumn'])->name('column');
 
