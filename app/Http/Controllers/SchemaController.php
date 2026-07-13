@@ -44,7 +44,7 @@ class SchemaController extends Controller
         $project = Project::where('slug', $project_slug)->where('owner_id', Auth()->id())->firstOrFail();
         $database = Database::where('name', $database_name)->where('project_id', $project->id)->firstOrFail();
         $table = Table::where('name', $table_name)->where('database_id', $database->id)->firstOrFail();
-        $table = Column::where('name', $column_name)->where('table_id', $table->id)->firstOrFail();
+        $column = Column::where('name', $column_name)->where('table_id', $table->id)->firstOrFail();
         return view('schema.column', compact('project', 'database', 'table', 'column'));
     }
 

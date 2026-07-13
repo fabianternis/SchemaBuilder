@@ -1,3 +1,9 @@
+@extends('layouts.app')
+
+@section('content')
 <h1>Home</h1>
-<a href="/login">Login</a>
-<a href="/signup">Signup</a>
+@guest
+<a href="{{ route('auth.login') }}">Login</a>
+<a href="{{ route('auth.signup') }}">Signup</a>
+@endguest
+@endsection
