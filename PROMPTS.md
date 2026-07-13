@@ -3,19 +3,19 @@
 ### 2026-07-11
 
 [NEW SESSION]
-#### `please update SCHEMA.md by adding the 'sessions'- and 'password_reset_tokens'-table from teh very first migration. then: update tzhe migration and create a new migration(and model) for Project(s)`
+`please update SCHEMA.md by adding the 'sessions'- and 'password_reset_tokens'-table from teh very first migration. then: update tzhe migration and create a new migration(and model) for Project(s)`
 Model: `Gemini 3.5 Pro (High reasoning)`
 PromptID: `1`
 <hr>
 
 [NEW SESSION]
-#### `Review routes/web.php. Based on thr routing, i prepared, create all the Controllers neccessary and some very simple views. Also create the schema-routing.`
+`Review routes/web.php. Based on thr routing, i prepared, create all the Controllers neccessary and some very simple views. Also create the schema-routing.`
 Model: `Gemini 3.5 Pro (High reasoning)`
 PromptID: `3`
 <hr>
 
 [SESSION Continues]
-#### `I did not provide enough context relating teh schema. I wanted all shcema-related models to be handled within the smae routing-group and Controller (the routes may even be e.g. "/{project_slug}/{database_name}/{table_name}/{column_name}") ... please rework that and update the Controller, routing and the schema-views.`
+`I did not provide enough context relating teh schema. I wanted all shcema-related models to be handled within the smae routing-group and Controller (the routes may even be e.g. "/{project_slug}/{database_name}/{table_name}/{column_name}") ... please rework that and update the Controller, routing and the schema-views.`
 Model: `Gemini 3.5 Pro (High reasoning`
 PromptID: `4`
 <hr>
@@ -23,16 +23,49 @@ PromptID: `4`
 ### 2026-07-12
 
 [NEW SESSION]
-#### `Please review the Project-model (I added $schema which i used to auto-genrate resource-views and validfation logic.). Please review the first two functions (create() and index()) of the ProjectController and the resources.index as well as resources.create views. Then finish the ProjectController and create the resources.show as well as resources.edit views (ALL BASED on the $schema inside the Project-model). If you have any fdeedback regarding the $schema please create a file as llm_output/{date+time}_{slug}.md.`
+`Please review the Project-model (I added $schema which i used to auto-genrate resource-views and validfation logic.). Please review the first two functions (create() and index()) of the ProjectController and the resources.index as well as resources.create views. Then finish the ProjectController and create the resources.show as well as resources.edit views (ALL BASED on the $schema inside the Project-model). If you have any fdeedback regarding the $schema please create a file as llm_output/{date+time}_{slug}.md.`
 Model: `Gemini 3.5 Pro (High reasoning)`
 PromptID: `5`
 <hr>
 
 [SESSION Continues]
-#### `Please perofmr your feedback (except 5.) which i will implement something special for, myself (also removbe "preferences" from the $schema on Project). Then: Update the stzore() (and maybe updat()), regarding the morph "owber" (owner_type seems not to get set on db-quirey) (""[Error LOG (190+ Lines)]"")`
-Model: `Gemini 3.5 Pro (High reasoning`
+`Please perofmr your feedback (except 5.) which i will implement something special for, myself (also removbe "preferences" from the $schema on Project). Then: Update the stzore() (and maybe updat()), regarding the morph "owber" (owner_type seems not to get set on db-quirey) (""[Error LOG (190+ Lines)]"")`
+Model: `Gemini 3.5 Pro (High reasoning)`
 PromptID: `6`
 <hr>
+
+### 2026-07-13
+
+[NEW SESSION]
+```You are an expert Laravel/PHP developer.. This is a Laravel application called "SchemaBuilder", used for designing database schemas.
+Your Objective is to Refactor the views schema.column and schema.table into dynamic, JavaScript-driven interfaces that manage form state locally and synchronize with the backend via JSON payloads.
+
+
+
+1. Review routes/web.php and app/Http/Controllers/SchemaController.php to understand the current routing, data structures, and expected backend payloads.
+2. Rewrite the views (schema.column, schema.table). Remove standard HTML form submissions.
+3. Implement a Vanilla JavaScript state-management approach. The entire view must function as a single reactive interface.
+4. Implement UI enhancements: Use native HTML dialogs or basic CSS/JS popovers for complex configurations (e.g. configuring foreign keys or column modifiers) without leaving the main form view.
+
+
+
+
+
+---
+
+
+
+
+
+- State Synchronization: The JS must collect all inputs and construct a comprehensive, nested JSON representation of the current schema state.
+- Save Mechanism 1 (Manual): Provide a global "Save Schema" button that triggers a POST/PUT request with the full JSON payload.
+- Save Mechanism 2 (Auto-save): Implement a debounced auto-save function. If the JSON state changes, wait for exactly 12345ms (or just 10000ms) of user inactivity, then automatically send the request.
+- Error Handling: Ensure UI feedback mechanisms exist for successful saves, pending saves, and validation errors returned from the SchemaController.
+```
+Model: `Claude Sonnet 4.6 (Thinking)`
+PromptID: `7`
+<hr>
+
 
 
 

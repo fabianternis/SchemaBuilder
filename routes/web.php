@@ -48,5 +48,11 @@ Route::middleware('auth')->group( function () {
         Route::get('/{project:slug}/{database:name}', [SchemaController::class, 'showDatabase'])->name('database');
         Route::get('/{project:slug}/{database:name}/{table:name}', [SchemaController::class, 'showTable'])->name('table');
         Route::get('/{project:slug}/{database:name}/{table:name}/{column:name}', [SchemaController::class, 'showColumn'])->name('column');
+
+        // JSON API endpoints for JS-driven save (PUT = no conflict with GET routes)
+        Route::put('/{project:slug}/{database:name}/{table:name}', [SchemaController::class, 'updateTable'])->name('table.update');
+        Route::put('/{project:slug}/{database:name}/{table:name}/{column:name}', [SchemaController::class, 'updateColumn'])->name('column.update');
+        // Tables list for FK selectors – uses a distinct literal segment to avoid {table:name} collision
+        Route::get('/{project:slug}/{database:name}/_tables', [SchemaController::class, 'tablesList'])->name('tables.list');
     });
 });
