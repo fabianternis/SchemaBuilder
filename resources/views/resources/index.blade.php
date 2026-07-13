@@ -38,7 +38,7 @@ $schema Example
             @endif
         @endforeach
 
-        <td><a href="{{ route($schema['base_route'].'.show', $item->id) }}">Show</a> <a href="{{ route($schema['base_route'].'.edit', $item->id) }}">Edit</a> <a>DELETE</a></td>
+        <td><a href="{{ route($schema['base_route'].'.show', $item) }}">Show</a> <a href="{{ route($schema['base_route'].'.edit', $item) }}">Edit</a> <a>DELETE</a></td>
     </tr>
     @endforeach
 </table>

@@ -1,7 +1,21 @@
-<h1>Project: {{ $project_slug }}</h1>
-<a href="/schema">Back to Projects</a>
+@extends('layouts.app')
+
+@section('content')
+<h1>Project: {{ $project->name }}</h1>
+<a href="{{ route('projects.index') }}">Back to Projects</a>
 <hr>
-<ul>
-    <li><a href="/schema/{{ $project_slug }}/db1">db1</a></li>
-    <li><a href="/schema/{{ $project_slug }}/db2">db2</a></li>
-</ul>
+
+@if($project->databases->isNotEmpty())
+    <ul>
+        @foreach($project->databases as $database)
+            <li>
+                <a href="{{ route('schema.database', ['project' => $project->slug, 'database' => $database->name]) }}">
+                    {{ $database->name }}
+                </a>
+            </li>
+        @endforeach
+    </ul>
+@else
+    <p>No databases found for this project.</p>
+@endif
+@endsection

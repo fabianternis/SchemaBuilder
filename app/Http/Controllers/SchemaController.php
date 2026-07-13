@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\{Project, SchemaDatabase as Database, SchemaTable as Table, SchemaColumn as Column};
-use Illuminate\Auth;
+// use Illuminate\Auth;
 use Illuminate\Support\Str;
 class SchemaController extends Controller
 {
@@ -16,15 +16,21 @@ class SchemaController extends Controller
         return view('schema.index');
     }
 
-    public function showProject(string $project_slug) {
-        $project = Project::where('slug', $project_slug)->where('owner_id', auth()->id())->firstOrFail();
-        if(!isset($project)){
-            abort(404, 'No Project could be Found');
-        } else {
-            // $databases = SchemDatabase::where
-            $databases = $project->databases();
-        }
-        return view('schema.project', compact(['project_slug', 'project']));
+    public function showProject(Project $project) {
+        // $project = Project::where('slug', $project_slug)->where('owner_id', auth()->id())->firstOrFail();
+        // if(!isset($project)){
+        //     abort(404, 'No Project could be Found');
+        // } else {
+        //     // $databases = SchemDatabase::where
+        //     $databases = $project->databases();
+        // }
+        // return view('schema.project', compact(['project_slug', 'project']));
+
+        abort_if($project->owner_id !== auth()->id(), 403);
+
+        // $databases = $project->databases();
+        $project->load('databases');
+        return view('schema.project', compact(['project'/*, 'databases'*/]));
     }
 
     public function showDatabase(string $project_slug, string $database_name) {

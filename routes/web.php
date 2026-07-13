@@ -35,18 +35,18 @@ Route::middleware('auth')->group( function () {
             Route::get('/', function () { return redirect()->route('projects.create');});
             Route::get('/create', [ProjectController::class, 'create'])->name('create');
             Route::post('/', [ProjectController::class, 'store'])->name('store');
-            Route::get('/{project_slug}/edit', [ProjectController::class, 'edit'])->name('edit');
-            Route::get('/{project_slug}/show', function () { return redirect()->route('schema.project'); })->name('show');
-            Route::put('/{project_slug}', [ProjectController::class, 'update'])->name('update');
-            Route::delete('/{project_slug}', [ProjectController::class, 'destroy'])->name('destroy');
+            Route::get('/{project:slug}/edit', [ProjectController::class, 'edit'])->name('edit');
+            Route::get('/{project:slug}/show', function ($project_slug) { return redirect()->route('schema.project', ['project' => $project_slug]);})->name('show');
+            Route::put('/{project:slug}', [ProjectController::class, 'update'])->name('update');
+            Route::delete('/{project:slug}', [ProjectController::class, 'destroy'])->name('destroy');
         });
     });
 
     Route::name('schema.')->group( function () {
         Route::post('/new', [SchemaController::class, 'quickStore'])->name('storeNew');
-        Route::get('/{project_slug}', [SchemaController::class, 'showProject'])->name('project');
-        Route::get('/{project_slug}/{database_name}', [SchemaController::class, 'showDatabase'])->name('database');
-        Route::get('/{project_slug}/{database_name}/{table_name}', [SchemaController::class, 'showTable'])->name('table');
-        Route::get('/{project_slug}/{database_name}/{table_name}/{column_name}', [SchemaController::class, 'showColumn'])->name('column');
+        Route::get('/{project:slug}', [SchemaController::class, 'showProject'])->name('project');
+        Route::get('/{project:slug}/{database:name}', [SchemaController::class, 'showDatabase'])->name('database');
+        Route::get('/{project:slug}/{database:name}/{table:name}', [SchemaController::class, 'showTable'])->name('table');
+        Route::get('/{project:slug}/{database:name}/{table:name}/{column:name}', [SchemaController::class, 'showColumn'])->name('column');
     });
 });

@@ -13,7 +13,7 @@ $schema Example
 */ --}}
 <h1>Edit {{ ucfirst(Str::singular($schema['name'])) }}</h1>
 
-<form action="{{ route($schema['base_route'].'.update', $item->id) }}" method="post">
+<form action="{{ route($schema['base_route'].'.update', $item) }}" method="post">
     @csrf
     @method('PUT')
     @foreach($schema['columns'] as $column)

@@ -31,4 +31,4 @@ $schema Example
 </div>
 
 <a href="{{ route($schema['base_route'].'.index') }}">Back to list</a>
-<a href="{{ route($schema['base_route'].'.edit', $item->id) }}">Edit</a>
+<a href="{{ route($schema['base_route'].'.edit', $item) }}">Edit</a>
