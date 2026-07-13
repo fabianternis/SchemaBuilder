@@ -27,8 +27,8 @@ Route::middleware('auth')->group( function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
 
-    Route::get('/new', [SchemaController::class, 'quickCreate'])->name('new');
-    
+    Route::get('/new/{project?}', [SchemaController::class, 'quickCreate'])->name('new');
+
     Route::name('projects.')->group(function () {
         Route::get('/projects', [ProjectController::class, 'index'])->name('index');
         Route::prefix('p')->group(function () {

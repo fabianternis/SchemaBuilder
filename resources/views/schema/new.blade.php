@@ -7,8 +7,8 @@
     <label for="project">Project</label>
     <select name="project">
         <option value="create_new">-- Create New --</option>
-        @foreach($projects as $project)
-        <option value="{{ $project->id }}">{{ $project->name }}</option>
+        @foreach($projects as $listProject)
+            <option value="{{ $listProject->id }}" @selected(isset($project) && $project->id === $listProject->id)>{{ $listProject->name }}</option>
         @endforeach
     </select>
     <label for="project_name">Project Name (only if no Project is selected, no JS yet)</label>

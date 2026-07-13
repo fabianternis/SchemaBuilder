@@ -57,13 +57,17 @@ class SchemaController extends Controller
 
 
 
-    public function quickCreate()
+    public function quickCreate(?Project $project)
     {
+        // if(!isset($project)) {
+        //     $projects = Project::where('owner_id', Auth()->id())->get();
+        //     return view('schema.new', compact('projects'));
+        // } else {
+        //     return view('schema.new', compact('project'));
+        // }
         $projects = Project::where('owner_id', Auth()->id())->get();
-        return view('schema.new', compact('projects'));
-    }
-
-public function quickStore(Request $request)
+        return view('schema.new', compact(['project', 'projects']));
+    }public function quickStore(Request $request)
     {
         $validated = $request->validate([
             'project' => ['required', 'string'],
@@ -74,20 +78,26 @@ public function quickStore(Request $request)
         ]);
 
         if ($validated['project'] === 'create_new') {
+            $baseSlug = Str::slug($validated['project_name']);
+            $slug = $baseSlug;
+            $counter = 1;
+
+            while (Project::where('slug', $slug)->exists()) {
+                $slug = $baseSlug . '-' . $counter++;
+            }
+
             $project = Project::create([
                 'owner_id' => auth()->id(),
-                'owner_type' => get_class(auth()->user()), 
+                'owner_type' => get_class(auth()->user()),
             // $project = new Project([
                 'name' => $validated['project_name'],
-                'slug' => Str::slug($validated['project_name']),
+                'slug' => $slug,
             ]);
-
-            Auth()->user()->projects()->save($project);
         } else {
             $project = Project::where('id', $validated['project'])->where('owner_id', auth()->id())->firstOrFail();
         }
 
-        $database = new SchemaDatabase([
+        $database = new Database([
             'name' => $validated['name'],
             'displayname' => $validated['displayname'],
             'description' => $validated['description'],
@@ -95,9 +105,6 @@ public function quickStore(Request $request)
 
         $project->databases()->save($database);
 
-        return redirect()->route('schema.database', [
-            'project_slug'  => $project->slug,
-            'database_name' => $database->name,
-        ]);
+        return redirect()->route('schema.database', compact(['project', 'database']));
     }
 }
