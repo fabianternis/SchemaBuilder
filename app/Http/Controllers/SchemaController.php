@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Project, SchemaDatabase};
+use App\Models\{Project, SchemaDatabase as Database, SchemaTable as Table, SchemaColumn as Column};
 use Illuminate\Auth;
 use Illuminate\Support\Str;
 class SchemaController extends Controller
@@ -28,15 +28,24 @@ class SchemaController extends Controller
     }
 
     public function showDatabase(string $project_slug, string $database_name) {
-        return view('schema.database', compact('project_slug', 'database_name'));
+        $project = Project::where('slug', $project_slug)->where('owner_id', Auth()->id())->firstOrFail();
+        $database = Database::where('name', $database_name)->where('project_id', $project->id)->firstOrFail();
+        return view('schema.database', compact(['project', 'database']));
     }
 
     public function showTable(string $project_slug, string $database_name, string $table_name) {
-        return view('schema.table', compact('project_slug', 'database_name', 'table_name'));
+        $project = Project::where('slug', $project_slug)->where('owner_id', Auth()->id())->firstOrFail();
+        $database = Database::where('name', $database_name)->where('project_id', $project->id)->firstOrFail();
+        $table = Table::where('name', $table_name)->where('database_id', $database->id)->firstOrFail();
+        return view('schema.table', compact('project', 'database', 'table'));
     }
 
     public function showColumn(string $project_slug, string $database_name, string $table_name, string $column_name) {
-        return view('schema.column', compact('project_slug', 'database_name', 'table_name', 'column_name'));
+        $project = Project::where('slug', $project_slug)->where('owner_id', Auth()->id())->firstOrFail();
+        $database = Database::where('name', $database_name)->where('project_id', $project->id)->firstOrFail();
+        $table = Table::where('name', $table_name)->where('database_id', $database->id)->firstOrFail();
+        $table = Column::where('name', $column_name)->where('table_id', $table->id)->firstOrFail();
+        return view('schema.column', compact('project', 'database', 'table', 'column'));
     }
 
 
