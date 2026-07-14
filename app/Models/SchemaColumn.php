@@ -23,6 +23,7 @@ class SchemaColumn extends Model
         'length',
         'auto_increment',
         'referenced_table_id',
+        'order_index',
     ];
 
     protected $casts = [
@@ -31,6 +32,7 @@ class SchemaColumn extends Model
         'is_unique' => 'boolean',
         'auto_increment' => 'boolean',
         'length' => 'integer',
+        'order_index' => 'integer',
     ];
 
     public function table(): BelongsTo

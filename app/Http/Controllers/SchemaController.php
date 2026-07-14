@@ -63,7 +63,7 @@ class SchemaController extends Controller
         // $table    = Table::where('name', $table_name)->where('database_id', $database->id)->firstOrFail();
 
         // Eager-load columns with their referenced table info
-        $table->load(['columns.referencedTable']);
+        $table->load(['columns' => fn($q) => $q->orderBy('order_index')->orderBy('created_at'), 'columns.referencedTable']);
 
         // All tables in this database (for FK selection)
         $allTables = Table::where('database_id', $database->id)->get(['id', 'name']);
@@ -77,8 +77,8 @@ class SchemaController extends Controller
         // $table    = Table::where('name', $table_name)->where('database_id', $database->id)->firstOrFail();
         // $column   = Column::where('name', $column_name)->where('table_id', $table->id)->firstOrFail();
 
-        // Sibling columns (for context)
-        $table->load('columns');
+        // Sibling columns (for context), ordered
+        $table->load(['columns' => fn($q) => $q->orderBy('order_index')->orderBy('created_at')]);
 
         // All tables in database (for FK dialog)
         $allTables = Table::where('database_id', $database->id)->get(['id', 'name']);
@@ -123,7 +123,7 @@ class SchemaController extends Controller
         $table->columns()->whereNotIn('id', $incomingIds)->delete();
 
         $savedColumns = [];
-        foreach ($validated['columns'] as $colData) {
+        foreach ($validated['columns'] as $index => $colData) {
             $attrs = [
                 'table_id'            => $table->id,
                 'name'                => $colData['name'],
@@ -136,6 +136,7 @@ class SchemaController extends Controller
                 'length'              => $colData['length']           ?? null,
                 'on_cascade'          => $colData['on_cascade']       ?? null,
                 'referenced_table_id' => $colData['referenced_table_id'] ?? null,
+                'order_index'         => $index,
             ];
 
             if (!empty($colData['id'])) {

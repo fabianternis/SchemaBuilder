@@ -3,563 +3,6 @@
 @section('title', 'Table: ' . $table->name . ' — SchemaBuilder')
 
 @section('head')
-<style>
-/* ===========================
-   DESIGN TOKENS
-=========================== */
-:root {
-    --bg:          #0d0f17;
-    --bg-card:     #13161f;
-    --bg-elevated: #1a1d2e;
-    --bg-input:    #0f1120;
-    --border:      #252840;
-    --border-glow: #3b4bdb;
-    --accent:      #4f6ef7;
-    --accent-2:    #7c3aed;
-    --danger:      #ef4444;
-    --success:     #22c55e;
-    --warning:     #f59e0b;
-    --text:        #e2e8f0;
-    --text-muted:  #64748b;
-    --text-dim:    #94a3b8;
-    --radius:      10px;
-    --radius-sm:   6px;
-    --transition:  150ms ease;
-    --shadow:      0 4px 24px rgba(0,0,0,.5);
-    --shadow-glow: 0 0 0 1px var(--accent), 0 4px 24px rgba(79,110,247,.2);
-    --font-mono:   'JetBrains Mono', 'Fira Code', monospace;
-}
-
-/* ===========================
-   RESET / BASE
-=========================== */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-    min-height: 100vh;
-}
-
-/* ===========================
-   PAGE SHELL
-=========================== */
-.page {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 24px 20px 80px;
-}
-
-/* ===========================
-   BREADCRUMB
-=========================== */
-.breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-bottom: 28px;
-    flex-wrap: wrap;
-}
-.breadcrumb a {
-    color: var(--accent);
-    text-decoration: none;
-    transition: color var(--transition);
-}
-.breadcrumb a:hover { color: #a5b4fc; }
-.breadcrumb .sep { color: var(--border); }
-
-/* ===========================
-   PAGE HEADER
-=========================== */
-.page-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 28px;
-    flex-wrap: wrap;
-}
-.page-header h1 {
-    font-size: 22px;
-    font-weight: 700;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.page-header h1 .icon {
-    width: 32px; height: 32px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    border-radius: var(--radius-sm);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
-}
-
-/* ===========================
-   STATUS BAR
-=========================== */
-.status-bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 12px;
-    padding: 8px 14px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    transition: all 0.3s ease;
-    min-width: 200px;
-}
-.status-bar .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--text-muted);
-    transition: background 0.3s ease;
-    flex-shrink: 0;
-}
-.status-bar.saved .dot    { background: var(--success); }
-.status-bar.pending .dot  { background: var(--warning); animation: pulse 1.2s infinite; }
-.status-bar.error .dot    { background: var(--danger); }
-.status-bar .status-text  { color: var(--text-dim); }
-.status-bar.saved .status-text  { color: var(--success); }
-.status-bar.pending .status-text { color: var(--warning); }
-.status-bar.error .status-text  { color: var(--danger); }
-
-@keyframes pulse {
-    0%,100% { opacity: 1; }
-    50%      { opacity: 0.4; }
-}
-
-/* ===========================
-   SAVE BUTTON
-=========================== */
-.btn-save {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-sm);
-    padding: 9px 18px;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity var(--transition), transform var(--transition);
-    box-shadow: 0 2px 12px rgba(79,110,247,.4);
-}
-.btn-save:hover:not(:disabled) { opacity: 0.85; transform: translateY(-1px); }
-.btn-save:active { transform: translateY(0); }
-.btn-save:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-/* ===========================
-   TABLE NAME SECTION
-=========================== */
-.section-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 20px;
-}
-.section-card h2 {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-muted);
-    margin-bottom: 14px;
-}
-
-.field-row {
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-.field-row:last-child { margin-bottom: 0; }
-.field-row label {
-    font-size: 13px;
-    color: var(--text-dim);
-    font-weight: 500;
-}
-
-input[type="text"],
-input[type="number"],
-select,
-textarea {
-    width: 100%;
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--text);
-    font-family: inherit;
-    font-size: 13px;
-    padding: 8px 12px;
-    outline: none;
-    transition: border-color var(--transition), box-shadow var(--transition);
-}
-input:focus, select:focus, textarea:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(79,110,247,.15);
-}
-input[type="text"].mono { font-family: var(--font-mono); }
-select option { background: var(--bg-elevated); }
-
-/* ===========================
-   COLUMNS SECTION
-=========================== */
-.columns-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-.columns-header h2 {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
-}
-.columns-header .count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px; height: 22px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-left: 8px;
-}
-
-.btn-add-col {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--text-dim);
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 6px 12px;
-    cursor: pointer;
-    transition: all var(--transition);
-}
-.btn-add-col:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: rgba(79,110,247,.06);
-}
-
-/* ===========================
-   COLUMN ROW
-=========================== */
-.columns-list { display: flex; flex-direction: column; gap: 10px; }
-
-.column-row {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    transition: border-color var(--transition), box-shadow var(--transition);
-    overflow: hidden;
-}
-.column-row:hover { border-color: #333659; }
-.column-row.dragging {
-    box-shadow: 0 8px 32px rgba(0,0,0,.6);
-    opacity: 0.85;
-    border-color: var(--accent);
-}
-
-.col-main {
-    display: grid;
-    grid-template-columns: 28px 1fr 180px auto auto;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 14px;
-}
-
-.drag-handle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--border);
-    cursor: grab;
-    font-size: 16px;
-    transition: color var(--transition);
-}
-.drag-handle:hover { color: var(--text-muted); }
-.drag-handle:active { cursor: grabbing; }
-
-.col-name-wrap {
-    position: relative;
-}
-.col-name-wrap input {
-    font-family: var(--font-mono);
-    font-size: 13px;
-}
-
-.col-badges {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-    align-items: center;
-}
-.badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    font-size: 10px;
-    font-weight: 600;
-    padding: 2px 7px;
-    border-radius: 4px;
-    letter-spacing: .3px;
-}
-.badge-pk { background: rgba(245,158,11,.12); color: #fbbf24; border: 1px solid rgba(245,158,11,.25); }
-.badge-fk { background: rgba(124,58,237,.12); color: #a78bfa; border: 1px solid rgba(124,58,237,.25); }
-.badge-uq { background: rgba(34,197,94,.12); color: #4ade80; border: 1px solid rgba(34,197,94,.25); }
-.badge-nn { background: rgba(239,68,68,.12); color: #f87171; border: 1px solid rgba(239,68,68,.25); }
-.badge-ai { background: rgba(79,110,247,.12); color: #818cf8; border: 1px solid rgba(79,110,247,.25); }
-
-.col-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.btn-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px; height: 30px;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
-    color: var(--text-muted);
-    font-size: 14px;
-    cursor: pointer;
-    transition: all var(--transition);
-    flex-shrink: 0;
-}
-.btn-icon:hover { background: var(--bg-elevated); border-color: var(--border); color: var(--text); }
-.btn-icon.danger:hover { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.3); color: var(--danger); }
-.btn-icon.accent:hover { background: rgba(79,110,247,.1); border-color: rgba(79,110,247,.3); color: var(--accent); }
-
-/* Expanded column panel */
-.col-expanded {
-    display: none;
-    border-top: 1px solid var(--border);
-    background: var(--bg-elevated);
-    padding: 16px 14px 16px 52px;
-    gap: 14px;
-    flex-wrap: wrap;
-}
-.col-expanded.open { display: flex; }
-
-.exp-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    min-width: 140px;
-}
-.exp-group label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: .5px;
-    color: var(--text-muted);
-}
-.exp-group input,
-.exp-group select {
-    padding: 6px 10px;
-    font-size: 12px;
-}
-
-/* Toggle switches */
-.toggle-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 110px;
-}
-.toggle-row label { font-size: 12px; color: var(--text-dim); cursor: pointer; }
-
-.toggle {
-    position: relative;
-    width: 34px;
-    height: 18px;
-    flex-shrink: 0;
-}
-.toggle input { opacity: 0; width: 0; height: 0; }
-.toggle-slider {
-    position: absolute;
-    inset: 0;
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-radius: 9px;
-    cursor: pointer;
-    transition: background var(--transition), border-color var(--transition);
-}
-.toggle-slider::before {
-    content: '';
-    position: absolute;
-    width: 12px; height: 12px;
-    background: var(--text-muted);
-    border-radius: 50%;
-    top: 2px; left: 2px;
-    transition: transform var(--transition), background var(--transition);
-}
-.toggle input:checked + .toggle-slider { background: var(--accent); border-color: var(--accent); }
-.toggle input:checked + .toggle-slider::before { transform: translateX(16px); background: #fff; }
-
-/* ===========================
-   FK DIALOG
-=========================== */
-dialog {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text);
-    padding: 0;
-    width: min(480px, 94vw);
-    box-shadow: var(--shadow);
-    outline: none;
-    overflow: hidden;
-}
-dialog::backdrop {
-    background: rgba(0,0,0,.65);
-    backdrop-filter: blur(4px);
-}
-.dialog-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-}
-.dialog-header h3 { font-size: 15px; font-weight: 600; }
-.dialog-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
-.dialog-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    padding: 14px 20px;
-    border-top: 1px solid var(--border);
-    background: var(--bg-elevated);
-}
-.btn-primary {
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-sm);
-    padding: 8px 18px;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity var(--transition);
-}
-.btn-primary:hover { opacity: 0.85; }
-.btn-ghost {
-    background: transparent;
-    color: var(--text-muted);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 8px 14px;
-    font-family: inherit;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all var(--transition);
-}
-.btn-ghost:hover { border-color: var(--text-muted); color: var(--text); }
-
-/* ===========================
-   TOAST NOTIFICATIONS
-=========================== */
-#toast-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    pointer-events: none;
-}
-.toast {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
-    border-radius: var(--radius-sm);
-    border: 1px solid transparent;
-    font-size: 13px;
-    font-weight: 500;
-    min-width: 260px;
-    max-width: 380px;
-    box-shadow: var(--shadow);
-    animation: slideIn .25s ease;
-    pointer-events: all;
-    background: var(--bg-card);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-.toast.success { border-color: rgba(34,197,94,.3); color: var(--success); }
-.toast.error   { border-color: rgba(239,68,68,.3); color: var(--danger); }
-.toast.info    { border-color: rgba(79,110,247,.3); color: #818cf8; }
-.toast.fading  { opacity: 0; transform: translateX(20px); }
-@keyframes slideIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
-
-/* ===========================
-   EMPTY STATE
-=========================== */
-.empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--text-muted);
-    border: 2px dashed var(--border);
-    border-radius: var(--radius);
-}
-.empty-state p { margin-top: 8px; font-size: 13px; }
-
-/* ===========================
-   TYPE TAG on column header
-=========================== */
-.col-type-tag {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    padding: 3px 8px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    color: #a5b4fc;
-    flex-shrink: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 120px;
-}
-
-/* drag-over visual */
-.col-drag-over { border-color: var(--accent) !important; box-shadow: var(--shadow-glow); }
-
-/* Autosave countdown badge */
-#autosave-countdown {
-    font-size: 11px;
-    color: var(--warning);
-    font-weight: 600;
-    display: none;
-}
-</style>
 @endsection
 
 @section('content')
@@ -567,29 +10,31 @@ dialog::backdrop {
 
     {{-- Breadcrumb --}}
     <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="{{ route('pages.dashboard') }}">Dashboard</a>
+        <span class="sep"><x-heroicon-o-chevron-right class="breadcrumb-sep-icon" /></span>
         <a href="{{ route('projects.index') }}">Projects</a>
-        <span class="sep">›</span>
+        <span class="sep"><x-heroicon-o-chevron-right class="breadcrumb-sep-icon" /></span>
         <a href="{{ route('schema.project', ['project' => $project->slug]) }}">{{ $project->name }}</a>
-        <span class="sep">›</span>
+        <span class="sep"><x-heroicon-o-chevron-right class="breadcrumb-sep-icon" /></span>
         <a href="{{ route('schema.database', ['project' => $project->slug, 'database' => $database->name]) }}">{{ $database->name }}</a>
-        <span class="sep">›</span>
+        <span class="sep"><x-heroicon-o-chevron-right class="breadcrumb-sep-icon" /></span>
         <span>{{ $table->name }}</span>
     </nav>
 
     {{-- Page Header --}}
     <div class="page-header">
         <h1>
-            <span class="icon">⊞</span>
+            <span class="icon"><x-heroicon-o-table-cells class="icon-svg" /></span>
             <span id="header-table-name">{{ $table->name }}</span>
         </h1>
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div class="page-header-actions">
             <div class="status-bar" id="status-bar">
                 <span class="dot"></span>
                 <span class="status-text" id="status-text">Ready</span>
                 <span id="autosave-countdown"></span>
             </div>
             <button class="btn-save" id="btn-manual-save" title="Save (Ctrl+S)">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                <x-heroicon-o-document-arrow-down class="btn-icon-svg" />
                 Save Table
             </button>
         </div>
@@ -605,11 +50,11 @@ dialog::backdrop {
     </div>
 
     {{-- Columns --}}
-    <div class="section-card" style="padding:20px 20px 24px;">
+    <div class="section-card section-card-columns">
         <div class="columns-header">
             <h2>Columns <span class="count" id="col-count">{{ $table->columns->count() }}</span></h2>
             <button class="btn-add-col" id="btn-add-column">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <x-heroicon-o-plus class="btn-icon-svg" />
                 Add Column
             </button>
         </div>
@@ -621,7 +66,7 @@ dialog::backdrop {
                  data-name="{{ $col->name }}"
                  draggable="true">
                 <div class="col-main">
-                    <div class="drag-handle" title="Drag to reorder">⠿</div>
+                    <div class="drag-handle" title="Drag to reorder"><x-heroicon-o-bars-3 class="drag-handle-icon" /></div>
                     <div class="col-name-wrap">
                         <input type="text" class="col-input-name mono"
                                value="{{ $col->name }}" placeholder="column_name" autocomplete="off"
@@ -646,9 +91,9 @@ dialog::backdrop {
                         <button class="btn-icon accent btn-config-fk" title="Configure Foreign Key"
                             data-col-id="{{ $col->id }}"
                             data-referenced="{{ $col->referenced_table_id ?? '' }}"
-                            data-cascade="{{ $col->on_cascade ?? '' }}">🔗</button>
-                        <button class="btn-icon btn-toggle-expand" title="Expand / collapse modifiers">⚙</button>
-                        <button class="btn-icon danger btn-delete-col" title="Delete column">✕</button>
+                            data-cascade="{{ $col->on_cascade ?? '' }}"><x-heroicon-o-link class="btn-icon-svg" /></button>
+                        <button class="btn-icon btn-toggle-expand" title="Expand / collapse modifiers"><x-heroicon-o-cog-6-tooth class="btn-icon-svg" /></button>
+                        <button class="btn-icon danger btn-delete-col" title="Delete column"><x-heroicon-o-x-mark class="btn-icon-svg" /></button>
                     </div>
                 </div>
                 <div class="col-expanded" id="exp-{{ $col->id }}">
@@ -692,7 +137,7 @@ dialog::backdrop {
             </div>
             @empty
             <div class="empty-state" id="empty-state">
-                <div style="font-size:28px;">⊡</div>
+                <div class="empty-state-icon"><x-heroicon-o-square-3-stack-3d class="empty-icon-svg" /></div>
                 <p>No columns yet. Click <strong>Add Column</strong> to get started.</p>
             </div>
             @endforelse
@@ -704,8 +149,8 @@ dialog::backdrop {
 {{-- FK Dialog --}}
 <dialog id="fk-dialog" aria-labelledby="fk-dialog-title">
     <div class="dialog-header">
-        <h3 id="fk-dialog-title">🔗 Configure Foreign Key</h3>
-        <button class="btn-icon" id="fk-dialog-close">✕</button>
+        <h3 id="fk-dialog-title"><x-heroicon-o-link class="dialog-title-icon" /> Configure Foreign Key</h3>
+        <button class="btn-icon" id="fk-dialog-close"><x-heroicon-o-x-mark class="btn-icon-svg" /></button>
     </div>
     <div class="dialog-body">
         <div class="exp-group">
@@ -727,7 +172,7 @@ dialog::backdrop {
                 <option value="NO ACTION">NO ACTION</option>
             </select>
         </div>
-        <div id="fk-preview" style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono);"></div>
+        <div id="fk-preview" class="fk-preview"></div>
     </div>
     <div class="dialog-footer">
         <button class="btn-ghost" id="fk-dialog-cancel">Cancel</button>
@@ -770,6 +215,7 @@ let columns = {{ \Illuminate\Support\Js::from($table->columns->map(fn($c) => [
     'length'              => $c->length,
     'on_cascade'          => $c->on_cascade,
     'referenced_table_id' => $c->referenced_table_id,
+    'order_index'         => $c->order_index,
 ])) }};
 
 let tableName = @json($table->name);
@@ -821,8 +267,8 @@ function setStatus(state, msg) {
 function toast(msg, type = 'info') {
     const el = document.createElement('div');
     el.className = `toast ${type}`;
-    const icons = { success: '✓', error: '✕', info: 'ℹ' };
-    el.innerHTML = `<span>${icons[type] || '•'}</span><span>${msg}</span>`;
+    const icons = { success: 'M4.5 12.75l6 6 9-13.5', error: 'M6 18L18 6M6 6l12 12', info: 'M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z' };
+    el.innerHTML = `<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="${icons[type] || 'M12 12h.01'}"/></svg><span>${msg}</span>`;
     toastContainer.appendChild(el);
     setTimeout(() => {
         el.classList.add('fading');
@@ -981,6 +427,7 @@ function updateBadges(row, col) {
 let tempIdCounter = 0;
 function buildColumnRow(col) {
     const tempId = col.id || ('_new_' + (++tempIdCounter));
+    if (!col.id) col._tempid = tempId; // Assign _tempid for reordering before save
     const row = document.createElement('div');
     row.className   = 'column-row';
     row.dataset.id  = col.id || '';
@@ -993,7 +440,7 @@ function buildColumnRow(col) {
 
     row.innerHTML = `
         <div class="col-main">
-            <div class="drag-handle" title="Drag to reorder">⠿</div>
+            <div class="drag-handle" title="Drag to reorder"><svg class="drag-handle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg></div>
             <div class="col-name-wrap">
                 <input type="text" class="col-input-name mono"
                        value="${escHtml(col.name)}" placeholder="column_name" autocomplete="off"
@@ -1007,9 +454,9 @@ function buildColumnRow(col) {
                 <button class="btn-icon accent btn-config-fk" title="Configure Foreign Key"
                     data-col-id="${escHtml(col.id||tempId)}"
                     data-referenced="${col.referenced_table_id||''}"
-                    data-cascade="${col.on_cascade||''}">🔗</button>
-                <button class="btn-icon btn-toggle-expand" title="Expand / collapse modifiers">⚙</button>
-                <button class="btn-icon danger btn-delete-col" title="Delete column">✕</button>
+                    data-cascade="${col.on_cascade||''}"><svg class="btn-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/></svg></button>
+                <button class="btn-icon btn-toggle-expand" title="Expand / collapse modifiers"><svg class="btn-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0Z"/></svg></button>
+                <button class="btn-icon danger btn-delete-col" title="Delete column"><svg class="btn-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
         </div>
         <div class="col-expanded" id="exp-${escHtml(tempId)}">
@@ -1169,7 +616,7 @@ function checkEmptyState() {
             emptyEl = document.createElement('div');
             emptyEl.id = 'empty-state';
             emptyEl.className = 'empty-state';
-            emptyEl.innerHTML = '<div style="font-size:28px;">⊡</div><p>No columns yet. Click <strong>Add Column</strong> to get started.</p>';
+            emptyEl.innerHTML = '<div class="empty-state-icon"><svg class="empty-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3"/></svg></div><p>No columns yet. Click <strong>Add Column</strong> to get started.</p>';
             colList.appendChild(emptyEl);
         }
     } else {

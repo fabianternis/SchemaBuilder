@@ -66,6 +66,43 @@ Model: `Claude Sonnet 4.6 (Thinking)`
 PromptID: `7`
 <hr>
 
+### 2026-07-14
+
+[NEW SESSION]
+```
+I added 'order_index' to schema_columns-table (to order columns on schema.table-view).
+
+You are an expert Laravel/PHP developer
+Please go into views: schema.column and schema.table and remove the CSS.
+I want to create the entire CSS myself, so please keep (and maybe add) some classes.
+Then install blade-icons via "composer require blade-ui-kit/blade-icons" and "php artisan vendor:publish --tag=blade-icons" and  implement the "ordering"-feature on schema.table view (also update the icons on the views ands IN NO CASE use emojis).
+After that is finished add breadcrombs to all other "authenticated" views.
+
+Thanks!
+```
+Model: `Claude Opus 4.6 (Thinking)`
+PromptID: `8`
+
+[SESSION Continues (After 7min. I ran out of quota)]
+```
+Please continue where you left-off with the previous prompt(""
+I added 'order_index' to schema_columns-table (to order columns on schema.table-view).
+
+You are an expert Laravel/PHP developer
+Please go into views: schema.column and schema.table and remove the CSS.
+I want to create the entire CSS myself, so please keep (and maybe add) some classes.
+Then install blade-icons via "composer require blade-ui-kit/blade-icons" and "php artisan vendor:publish --tag=blade-icons" and  implement the "ordering"-feature on schema.table view (also update the icons on the views ands IN NO CASE use emojis).
+After that is finished add breadcrombs to all other "authenticated" views.
+
+Thanks!
+"")
+
+you may look/review what you already did.
+```
+Model: `Gemini 3.1 Pro (High)`
+PromptID: `9`
+<hr>
+
 
 
 
