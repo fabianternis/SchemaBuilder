@@ -185,7 +185,9 @@
             <select id="fk-select-table">
                 <option value="">— None (remove FK) —</option>
                 @foreach($allTables as $t)
-                    <option value="{{ $t->id }}" {{ $column->referenced_table_id === $t->id ? 'selected' : '' }}>{{ $t->name }}</option>
+                    @if(!($t->id == $table->id))
+                        <option value="{{ $t->id }}" {{ $column->referenced_table_id === $t->id ? 'selected' : '' }}>{{ $t->name }}</option>
+                    @endif
                 @endforeach
             </select>
         </div>
