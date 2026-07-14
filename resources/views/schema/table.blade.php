@@ -615,7 +615,7 @@ dialog::backdrop {
         </div>
 
         <div class="columns-list" id="columns-list">
-            @forelse($table->columns as $col)
+            @forelse($table->columns->sortBy('order_index') as $col)
             <div class="column-row"
                  data-id="{{ $col->id }}"
                  data-name="{{ $col->name }}"
@@ -745,8 +745,8 @@ dialog::backdrop {
 //  DATA: seed initial state from server-rendered Blade data
 // ============================================================
 const CSRF      = document.querySelector('meta[name="csrf-token"]').content;
-const SAVE_URL  = {{ route('schema.table.update', [$project, $database, $table]) }};
-const ALL_TABLES = @json($allTables->map(fn($t) => ['id' => $t->id, 'name' => $t->name]));
+const SAVE_URL   = "{{ route('schema.table.update', [$project, $database, $table]) }}";
+const ALL_TABLES = {!! json_encode($allTables->map(fn($t) => ['id' => $t->id, 'name' => $t->name])) !!};
 
 const COLUMN_TYPES = [
     'bigint','bigIncrements','binary','boolean','char','date','dateTime',

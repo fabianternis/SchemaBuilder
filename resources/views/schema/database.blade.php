@@ -6,6 +6,7 @@
 <hr>
 
 @if($database->tables->isNotEmpty())
+    <h3>Tables</h3>
     <ul>
         @foreach($database->tables as $table)
             <li><a href="{{ route('schema.table', [$project, $database, $table]) }}">{{ $table->name }} (Table)</a></li>

@@ -1,3 +1,4 @@
 - laoyut on auth views
 - resource.templating (forms, index, show) ...
 - breadcrumbs (easy bc. routes)
+- GitHub+HackClub OAUTH

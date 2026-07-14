@@ -583,12 +583,7 @@ dialog::backdrop { background: rgba(0,0,0,.65); backdrop-filter: blur(4px); }
 //  INITIAL STATE (seeded from Blade)
 // ============================================================
 const CSRF     = document.querySelector('meta[name="csrf-token"]').content;
-const SAVE_URL = @json(route('schema.column.update', [
-    $project->slug,
-    $database->name,
-    $table->name,
-    $column->name,
-]));
+const SAVE_URL = "{{ route('schema.column.update', [$project, $database, $table, $column]) }}"
 
 const ALL_TABLES = @json($allTables->map(fn($t) => ['id' => $t->id, 'name' => $t->name]));
 
