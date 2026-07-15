@@ -529,8 +529,7 @@ function attachRowListeners(row, colObj) {
 
     // Expand toggle
     row.querySelector('.btn-toggle-expand').addEventListener('click', () => {
-        const panel = row.querySelector('.col-expanded');
-        panel.classList.toggle('open');
+        row.classList.toggle('open');
     });
 
     // Delete column
@@ -641,13 +640,13 @@ btnAddCol.addEventListener('click', () => {
         on_cascade: null,
         referenced_table_id: null,
     };
-    columns.push(newCol);
-
-    checkEmptyState(); // remove empty state if present
+    
+    columns.push(newCol);checkEmptyState(); // remove empty state if present
     const row = buildColumnRow(newCol);
     colList.appendChild(row);
-    // Expand immediately & focus name
-    row.querySelector('.col-expanded').classList.add('open');
+    
+    // Expand row immediately & focus name
+    row.classList.add('open'); 
     row.querySelector('.col-input-name').focus();
     onStateChange();
 });
