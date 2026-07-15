@@ -1,5 +1,10 @@
 :root {
     --transition: all .6s ease-in-out;
+    --radius: 14px;
+}
+
+* {
+    border-radius: var(--radius); /* ToDo: ONLY TEMPORARY */
 }
 
 body {

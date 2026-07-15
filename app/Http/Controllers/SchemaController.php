@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\{Project, SchemaDatabase as Database, SchemaTable as Table, SchemaColumn as Column};
 use Illuminate\Support\Str;
+use App\Services\DatabaseExportService;
 
 class SchemaController extends Controller
 {
@@ -254,5 +255,42 @@ class SchemaController extends Controller
         $project->databases()->save($database);
 
         return redirect()->route('schema.database', compact(['project', 'database']));
+    }
+
+    // function exportDatabase(Database $database, string $to)
+    // {
+    //     $project = $database->project();
+    //     if(!$project->user() == Auth()->user()) {
+    //         abort(403);
+    //     } else {
+    //         $tables = $database->tables();
+    //         $output_data = '';
+    //         foreach($tables as $table) { $output_data.=$this->exportTable($table, $to); }
+    //     }
+    // }
+
+    // function exportTable(Table $table, string $to)
+    // {
+    //     // ToDO
+    //     $output_string = 'CREATE TABLE '.$table->name. ' { \n';
+
+    //     $columns = $table->columns();
+
+    //     foreach($columns as $column) {
+    //         $output_string.= '';
+
+    //     }
+
+    //     return $output_string;
+    // }
+
+    public function export(string $project_slug, string $database_name, DatabaseExportService $exportService)
+    {
+        $project = Project::where('slug', $project_slug)->where('owner_id', auth()->id())->firstOrFail();
+        $database = Database::where('name', $database_name)->where('project_id', $project->id)->firstOrFail();
+
+        $sqlOutput = $exportService->exportDatabase($database, 'sql');
+
+        return response($sqlOutput, 200)->header('Content-Type', 'text/plain')->header('Content-Disposition', "attachment; filename=\"{$database->name}_schema.sql\"");
     }
 }
