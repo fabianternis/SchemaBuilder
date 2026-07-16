@@ -7,13 +7,15 @@
 
     {{-- Hero --}}
     <div class="home-hero">
-        <div class="home-logo">SB</div>
+        <div class="home-name">SchemaBuilder <span class="home-by">by <a target="_blank" href="https://github.com/fabianternis">Fabian Ternis</a></span></div>
+
+        <img src="https://hackatime.hackclub.com/api/v1/badge/U0B8JTZDTKQ/fabianternis/SchemaBuilder" class="home-hackatime-badge">
 
         <h1 class="home-title">Design database schemas<br>without the fuss.</h1>
 
         <p class="home-sub">
-            SchemaBuilder lets you visually design, manage and export database
-            schemas — tables, columns, types, constraints and foreign keys, all in one place.
+            SchemaBuilder lets you simply design, manage and export database schemas.<br>
+            You have tables, columns, types, constraints and foreign keys all in one place.
         </p>
 
         <div class="home-actions">

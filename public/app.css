@@ -979,19 +979,22 @@ dialog {
     gap: 20px;
 }
 
-.home-logo {
-    width: 52px;
-    height: 52px;
-    background: var(--accent);
-    border-radius: var(--radius-lg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
+.home-name {
+    color: var(--accent);
     font-size: 26px;
     font-weight: 700;
     letter-spacing: -1px;
-    box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 40%, transparent);
+
+    .home-by {
+        font-size: 20px;
+        font-weight: 500;
+
+        a {
+            text-decoration: underline;
+        }
+    }
+
+    scale: 2;
 }
 
 .home-title {
@@ -1004,7 +1007,7 @@ dialog {
 .home-sub {
     font-size: 15px;
     color: var(--text-secondary);
-    max-width: 380px;
+    max-width: 680px;
     line-height: 1.6;
 }
 
