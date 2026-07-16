@@ -134,5 +134,16 @@ Thanks!
 ```
 Model: `Claude Sonnet 4.6 (Thinking)`
 PromptID: `11`
+<hr>
+
+
+<!-- [NEW SESSION]
+```
+I have a Laravel Codebase here (project name: SchemaBuilder).
+
+I have Resource template-views (e.g. used in ProjectCOntroller). now: please update Database(in SchemaControlelr and web.php) and projects.show to also use it (there is currently now way)
+```
+Model: ``
+PromptID: `` --> 
 
 _**note:** PromptID is for reference from ROADMAP.md_

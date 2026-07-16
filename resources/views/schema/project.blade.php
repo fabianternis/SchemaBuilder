@@ -24,6 +24,9 @@
             <a class="btn-secondary" href="{{ route('projects.index') }}">
                 <x-heroicon-o-arrow-left class="btn-icon-svg" /> Back to Projects
             </a>
+            <a class="btn-primary" href="{{ route('new', $project->slug) }}">
+                <x-heroicon-o-plus class="btn-icon-svg" /> Create Database
+            </a>
         </div>
     </div>
 
