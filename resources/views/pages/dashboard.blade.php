@@ -16,7 +16,6 @@
             <span class="icon"><x-heroicon-o-squares-2x2 class="icon-svg" /></span>
             Dashboard
         </h1>
-        <a href="{{ route('new') }}">"NEW"</a>
         <div class="page-header-actions">
             <a class="btn-secondary" href="{{ route('projects.index') }}">
                 <x-heroicon-o-folder class="btn-icon-svg" /> Projects
@@ -30,5 +29,7 @@
         </div>
     </div>
 
+
+    <a href="{{ route('new') }}">"NEW"</a>
 </div>
 @endsection

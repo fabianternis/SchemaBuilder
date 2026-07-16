@@ -11,7 +11,7 @@
 
         <img src="https://hackatime.hackclub.com/api/v1/badge/U0B8JTZDTKQ/fabianternis/SchemaBuilder" class="home-hackatime-badge">
 
-        <h1 class="home-title">Design database schemas<br>without the fuss.</h1>
+        <h1 class="home-title">Simply design database schemas.</h1>
 
         <p class="home-sub">
             SchemaBuilder lets you simply design, manage and export database schemas.<br>
