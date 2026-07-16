@@ -4,3 +4,5 @@
 - GitHub+HackClub OAUTH
 - Update url on rename (e.g. column/table) ...
 - a "viewer" like phpMyAdmin has
+- Add more export-options (e.g. Laravel, SQL, ... (whatever people use))
+- Allow "import" with multiple options (SQL, Laravel, ...)

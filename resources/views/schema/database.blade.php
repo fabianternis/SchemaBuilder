@@ -11,7 +11,7 @@
         <span class="sep"><x-heroicon-o-chevron-right class="breadcrumb-sep-icon" /></span>
         <a href="{{ route('projects.index') }}">Projects</a>
         <span class="sep"><x-heroicon-o-chevron-right class="breadcrumb-sep-icon" /></span>
-        <a href="{{ route('schema.project', ['project' => $project->slug]) }}">{{ $project->name }}</a>
+        <a href="{{ route('schema.project', $project) }}">{{ $project->name }}</a>
         <span class="sep"><x-heroicon-o-chevron-right class="breadcrumb-sep-icon" /></span>
         <span>{{ $database->name }}</span>
     </nav>
@@ -23,8 +23,11 @@
             {{ $database->name }}
         </h1>
         <div class="page-header-actions">
-            <a class="btn-secondary" href="{{ route('schema.project', ['project' => $project->slug]) }}">
+            <a class="btn-secondary" href="{{ route('schema.project', $project) }}">
                 <x-heroicon-o-arrow-left class="btn-icon-svg" /> Back to Project
+            </a>
+            <a class="btn-secondary" href="{{ route('schema.export', [$project, $database]) }}">
+                <x-heroicon-o-arrow-down class="btn-icon-svg" /> Export (currenly only SQL supported)
             </a>
         </div>
     </div>

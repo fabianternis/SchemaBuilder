@@ -10,11 +10,6 @@ use App\Services\DatabaseExportService;
 
 class SchemaController extends Controller
 {
-
-    public function index() {
-        return view('schema.index');
-    }
-
     public function showProject(Project $project) {
         abort_if($project->owner_id !== auth()->id(), 403);
 
