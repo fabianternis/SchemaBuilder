@@ -1,4 +1,4 @@
-# User-friendly Routes
+## User-friendly Routes
 To make life easier for people that, like me, like to change their urls to navigate a website.
 To achive this, I designed the routing to be like `/{project:slug}/{database:name}/{table:name}/{column:name}`(Image of complete Routing below).
 Users can Simply change e.g. the database, table or column name or remove e.g. the column and table to get to the database-level. ![image](https://cdn.hackclub.com/019f5ab5-f13b-7fbb-ba31-66113a077662/Screenshot%202026-07-13%20at%2011.01.12.png)I also implemented a kind of "validation" that checks if a url(combination of project, database, table and collumn is even possible) by checking the database for project, then if the database is linked to the project via `project_id` and so-on. i also check if the user is permitted to perform those actions by validating the auth-users's ID with the `owner_id` of the Project.
