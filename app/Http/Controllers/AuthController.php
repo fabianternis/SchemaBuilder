@@ -20,15 +20,14 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        // $user = User::where('email', $data['email']);
-
         if(Auth::attempt($data)) {
+            $request->session()->regenerate();
             return redirect()->route('root'); // will redirect to dashboard ... (due to router-logic)
         }
 
-        $request->session()->regenerate();
-
-        return back(); // may set session-errors or sth.
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     }
 
     public function showSignup() {
@@ -62,5 +61,7 @@ class AuthController extends Controller
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        return redirect()->route('auth.login');
     }
 }

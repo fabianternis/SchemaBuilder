@@ -5,14 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\{Project, SchemaDatabase as Database, SchemaTable as Table, SchemaColumn as Column};
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use App\Services\DatabaseExportService;
 
 class SchemaController extends Controller
 {
 
-    public function store() {
-
-    }
     public function index() {
         return view('schema.index');
     }
@@ -21,47 +19,59 @@ class SchemaController extends Controller
         abort_if($project->owner_id !== auth()->id(), 403);
 
         $project->load('databases');
-        return view('schema.project', compact(['project']));
+        return view('schema.project', compact('project'));
     }
 
-    public function showDatabase(string $project_slug, string $database_name) {
-        $project = Project::where('slug', $project_slug)->where('owner_id', Auth()->id())->firstOrFail();
-        $database = Database::where('name', $database_name)->where('project_id', $project->id)->firstOrFail();
-        return view('schema.database', compact(['project', 'database']));
+    public function showDatabase(Project $project, Database $database) {
+        abort_if($project->owner_id !== auth()->id(), 403);
+        abort_if($database->project_id !== $project->id, 404);
+
+        $database->load('tables');
+        return view('schema.database', compact('project', 'database'));
     }
 
     public function createTable(Project $project, Database $database)
     {
-        return view('schema.table.create', compact([$project, $database]));
+        abort_if($project->owner_id !== auth()->id(), 403);
+        abort_if($database->project_id !== $project->id, 404);
+
+        return view('schema.table.create', compact('project', 'database'));
     }
 
     public function storeTable(Request $request, Project $project, Database $database)
     {
+        abort_if($project->owner_id !== auth()->id(), 403);
+        abort_if($database->project_id !== $project->id, 404);
+
         $data = $request->validate([
-            'name' => 'required|string',
+            'name' => 'required|string|max:255',
         ]);
 
-
+        // Ensure unique name within this database
         $baseName = $data['name'];
         $name = $baseName;
         $counter = 1;
 
-        while (Table::where('name', $name)->exists()) {
+        while (Table::where('name', $name)->where('database_id', $database->id)->exists()) {
             $name = $baseName . '_' . $counter++;
         }
 
         $table = Table::create([
             'database_id' => $database->id,
-            'name' => $data['name'],
+            'name' => $name,
         ]);
 
-        return redirect()->route('schema.table', compact(['project', 'database', 'table']));
+        return redirect()->route('schema.table', [
+            'project'  => $project->slug,
+            'database' => $database->name,
+            'table'    => $table->name,
+        ]);
     }
 
     public function showTable(Project $project, Database $database, Table $table) {
-        // $project  = Project::where('slug', $project_slug)->where('owner_id', Auth()->id())->firstOrFail();
-        // $database = Database::where('name', $database_name)->where('project_id', $project->id)->firstOrFail();
-        // $table    = Table::where('name', $table_name)->where('database_id', $database->id)->firstOrFail();
+        abort_if($project->owner_id !== auth()->id(), 403);
+        abort_if($database->project_id !== $project->id, 404);
+        abort_if($table->database_id !== $database->id, 404);
 
         // Eager-load columns with their referenced table info
         $table->load(['columns' => fn($q) => $q->orderBy('order_index')->orderBy('created_at'), 'columns.referencedTable']);
@@ -73,10 +83,10 @@ class SchemaController extends Controller
     }
 
     public function showColumn(Project $project, Database $database, Table $table, Column $column) {
-        // $project  = Project::where('slug', $project_slug)->where('owner_id', Auth()->id())->firstOrFail();
-        // $database = Database::where('name', $database_name)->where('project_id', $project->id)->firstOrFail();
-        // $table    = Table::where('name', $table_name)->where('database_id', $database->id)->firstOrFail();
-        // $column   = Column::where('name', $column_name)->where('table_id', $table->id)->firstOrFail();
+        abort_if($project->owner_id !== auth()->id(), 403);
+        abort_if($database->project_id !== $project->id, 404);
+        abort_if($table->database_id !== $database->id, 404);
+        abort_if($column->table_id !== $table->id, 404);
 
         // Sibling columns (for context), ordered
         $table->load(['columns' => fn($q) => $q->orderBy('order_index')->orderBy('created_at')]);
@@ -90,11 +100,11 @@ class SchemaController extends Controller
     // -------------------------------------------------------------------------
     // JSON API: update a table and its columns
     // -------------------------------------------------------------------------
-    public function updateTable(Request $request, string $project_slug, string $database_name, string $table_name)
+    public function updateTable(Request $request, Project $project, Database $database, Table $table)
     {
-        $project  = Project::where('slug', $project_slug)->where('owner_id', auth()->id())->firstOrFail();
-        $database = Database::where('name', $database_name)->where('project_id', $project->id)->firstOrFail();
-        $table    = Table::where('name', $table_name)->where('database_id', $database->id)->firstOrFail();
+        abort_if($project->owner_id !== auth()->id(), 403);
+        abort_if($database->project_id !== $project->id, 404);
+        abort_if($table->database_id !== $database->id, 404);
 
         $validated = $request->validate([
             'name'                       => ['required', 'string', 'max:255'],
@@ -166,12 +176,12 @@ class SchemaController extends Controller
     // -------------------------------------------------------------------------
     // JSON API: update a single column
     // -------------------------------------------------------------------------
-    public function updateColumn(Request $request, string $project_slug, string $database_name, string $table_name, string $column_name)
+    public function updateColumn(Request $request, Project $project, Database $database, Table $table, Column $column)
     {
-        $project  = Project::where('slug', $project_slug)->where('owner_id', auth()->id())->firstOrFail();
-        $database = Database::where('name', $database_name)->where('project_id', $project->id)->firstOrFail();
-        $table    = Table::where('name', $table_name)->where('database_id', $database->id)->firstOrFail();
-        $column   = Column::where('name', $column_name)->where('table_id', $table->id)->firstOrFail();
+        abort_if($project->owner_id !== auth()->id(), 403);
+        abort_if($database->project_id !== $project->id, 404);
+        abort_if($table->database_id !== $database->id, 404);
+        abort_if($column->table_id !== $table->id, 404);
 
         $validated = $request->validate([
             'name'                => ['required', 'string', 'max:255'],
@@ -199,22 +209,32 @@ class SchemaController extends Controller
     // -------------------------------------------------------------------------
     // JSON API: list all tables in a database (for FK selectors)
     // -------------------------------------------------------------------------
-    public function tablesList(string $project_slug, string $database_name)
+    public function tablesList(Project $project, Database $database)
     {
-        $project  = Project::where('slug', $project_slug)->where('owner_id', auth()->id())->firstOrFail();
-        $database = Database::where('name', $database_name)->where('project_id', $project->id)->firstOrFail();
-        $tables   = Table::where('database_id', $database->id)->get(['id', 'name']);
+        abort_if($project->owner_id !== auth()->id(), 403);
+        abort_if($database->project_id !== $project->id, 404);
+
+        $tables = Table::where('database_id', $database->id)->get(['id', 'name']);
 
         return response()->json(['tables' => $tables]);
     }
 
     // -------------------------------------------------------------------------
-    // Quick Create / Store (original)
+    // Quick Create / Store
     // -------------------------------------------------------------------------
-    public function quickCreate(?Project $project)
+    public function quickCreate(Request $request)
     {
-        $projects = Project::where('owner_id', Auth()->id())->get();
-        return view('schema.new', compact(['project', 'projects']));
+        $project  = null;
+        $projects = Project::where('owner_id', Auth::id())->get();
+
+        // If a project slug was passed as a query/route param, resolve it
+        if ($request->route('project')) {
+            $project = Project::where('slug', $request->route('project'))
+                ->where('owner_id', Auth::id())
+                ->first();
+        }
+
+        return view('schema.new', compact('project', 'projects'));
     }
 
     public function quickStore(Request $request)
@@ -248,50 +268,30 @@ class SchemaController extends Controller
 
         $database = new Database([
             'name'        => $validated['name'],
-            'displayname' => $validated['displayname'],
-            'description' => $validated['description'],
+            'displayname' => $validated['displayname'] ?? null,
+            'description' => $validated['description'] ?? null,
         ]);
 
         $project->databases()->save($database);
 
-        return redirect()->route('schema.database', compact(['project', 'database']));
+        return redirect()->route('schema.database', [
+            'project'  => $project->slug,
+            'database' => $database->name,
+        ]);
     }
 
-    // function exportDatabase(Database $database, string $to)
-    // {
-    //     $project = $database->project();
-    //     if(!$project->user() == Auth()->user()) {
-    //         abort(403);
-    //     } else {
-    //         $tables = $database->tables();
-    //         $output_data = '';
-    //         foreach($tables as $table) { $output_data.=$this->exportTable($table, $to); }
-    //     }
-    // }
-
-    // function exportTable(Table $table, string $to)
-    // {
-    //     // ToDO
-    //     $output_string = 'CREATE TABLE '.$table->name. ' { \n';
-
-    //     $columns = $table->columns();
-
-    //     foreach($columns as $column) {
-    //         $output_string.= '';
-
-    //     }
-
-    //     return $output_string;
-    // }
-    
-
-    public function export(string $project_slug, string $database_name, DatabaseExportService $exportService)
+    // -------------------------------------------------------------------------
+    // Export database schema as SQL
+    // -------------------------------------------------------------------------
+    public function export(Project $project, Database $database, DatabaseExportService $exportService)
     {
-        $project = Project::where('slug', $project_slug)->where('owner_id', auth()->id())->firstOrFail();
-        $database = Database::where('name', $database_name)->where('project_id', $project->id)->firstOrFail();
+        abort_if($project->owner_id !== auth()->id(), 403);
+        abort_if($database->project_id !== $project->id, 404);
 
         $sqlOutput = $exportService->exportDatabase($database, 'sql');
 
-        return response($sqlOutput, 200)->header('Content-Type', 'text/plain')->header('Content-Disposition', "attachment; filename=\"{$database->name}_schema.sql\"");
+        return response($sqlOutput, 200)
+            ->header('Content-Type', 'text/plain')
+            ->header('Content-Disposition', "attachment; filename=\"{$database->name}_schema.sql\"");
     }
 }

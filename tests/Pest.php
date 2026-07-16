@@ -15,8 +15,12 @@ use Tests\TestCase;
 */
 
 pest()->extend(TestCase::class)
- // ->use(RefreshDatabase::class)
+    ->use(RefreshDatabase::class)
     ->in('Feature');
+
+pest()->extend(TestCase::class)
+    ->use(RefreshDatabase::class)
+    ->in('Unit');
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +48,12 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+/**
+ * Create a user and log them in.
+ */
+function loginUser(array $attributes = []): \App\Models\User
 {
-    // ..
+    $user = \App\Models\User::factory()->create($attributes);
+    test()->actingAs($user);
+    return $user;
 }

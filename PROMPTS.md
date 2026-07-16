@@ -104,6 +104,22 @@ PromptID: `9`
 <hr>
 
 
+### 2026-07-16
+
+[NEW SESSION]
+```
+I have a Laravel Codebase here (project name: SchemaBuilder).
+
+You are a Senior Laravel and PHP expert. Your Task is to review the entire codebase, make sure all functionality is actually functional and add missing functionality. You are also tasked with creating some tests to ensure functionality.
+
+you may only stop after you ensured everythging is fully functional.
+
+If you encounter any major issues, bugs or logical errors: request Review from teh User(me).
+
+output your findings to: llm_output/{date}_{time}_{slug}.md and perform a git-commit fully by yourself
+```
+Model: `Claude Sonnet 4.6 (Thinking)`
+PromptID: `10`
 
 
 _**note:** PromptID is for reference from ROADMAP.md_
