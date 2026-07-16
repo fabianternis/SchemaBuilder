@@ -3,7 +3,7 @@ In standard Laravel(the PHP-framework, i use) development, building CRUD (Create
 
 To solbve this in my Project, I designed and implemnted a metadata-driven resource-template architecture that generates resource-views dynamically.
 
-<hr>
+---
 
 ### Code (Defining the schema)
 
@@ -62,11 +62,7 @@ class Project extends Model
 ```
 
 
-<hr>
-
-<!-- ### How i implemnted the Templating
-
-With the `$schema`, which i defined on the Model, I designed the blade-views to dynamically generate based on the schema and then use the actual dynamic content based on a specific item of the Model-type. -->
+---
 
 ### How the Dynamic Views Work
 
