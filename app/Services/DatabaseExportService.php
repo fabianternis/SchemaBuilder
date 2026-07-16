@@ -2,8 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\SchemaDatabase as Database;
-use App\Models\SchemaTable as Table;
+use App\Models\{SchemaDatabase as Database, SchemaTable as Table};
 use Illuminate\Support\Facades\Auth;
 
 class DatabaseExportService
