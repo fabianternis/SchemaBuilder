@@ -7,6 +7,7 @@ use App\Models\{Project, SchemaDatabase as Database, SchemaTable as Table, Schem
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Services\DatabaseExportService;
+use App\Services\DatabaseImportService;
 
 class SchemaController extends Controller
 {
@@ -276,17 +277,64 @@ class SchemaController extends Controller
     }
 
     // -------------------------------------------------------------------------
-    // Export database schema as SQL
+    // Export database schema (SQL / Laravel / JSON / CSV)
     // -------------------------------------------------------------------------
-    public function export(Project $project, Database $database, DatabaseExportService $exportService)
+    public function export(Request $request, Project $project, Database $database, DatabaseExportService $exportService)
     {
         abort_if($project->owner_id !== auth()->id(), 403);
         abort_if($database->project_id !== $project->id, 404);
 
-        $sqlOutput = $exportService->exportDatabase($database, 'sql');
+        $to = strtolower($request->route('to') ?? $request->query('to', 'sql'));
 
-        return response($sqlOutput, 200)
-            ->header('Content-Type', 'text/plain')
-            ->header('Content-Disposition', "attachment; filename=\"{$database->name}_schema.sql\"");
+        $validTargets = array_keys(DatabaseExportService::$targets);
+        if (!in_array($to, $validTargets, true)) {
+            abort(404, "Unknown export format: {$to}");
+        }
+
+        $output   = $exportService->exportDatabase($database, $to);
+        $mime     = $exportService->getMimeType($to);
+        $ext      = $exportService->getExtension($to);
+        $filename = "{$database->name}_schema.{$ext}";
+
+        return response($output, 200)
+            ->header('Content-Type', $mime)
+            ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
+    }
+
+    // -------------------------------------------------------------------------
+    // Import schema into a database
+    // -------------------------------------------------------------------------
+    public function import(Request $request, Project $project, Database $database, DatabaseImportService $importService)
+    {
+        abort_if($project->owner_id !== auth()->id(), 403);
+        abort_if($database->project_id !== $project->id, 404);
+
+        $validSources = array_keys(DatabaseImportService::$sources);
+
+        $validated = $request->validate([
+            'from'   => ['required', 'string', 'in:' . implode(',', $validSources)],
+            'schema' => ['required', 'file', 'max:2048', 'mimes:txt,sql,json,csv,plain'],
+        ]);
+
+        $content = file_get_contents($validated['schema']->getRealPath());
+
+        if (empty(trim($content))) {
+            return back()->withErrors(['schema' => 'The uploaded file is empty.']);
+        }
+
+        try {
+            $stats = $importService->import($database, $validated['from'], $content);
+        } catch (\Throwable $e) {
+            return back()->withErrors(['schema' => 'Import failed: ' . $e->getMessage()]);
+        }
+
+        $msg = "Import complete: {$stats['tables_created']} table(s), {$stats['columns_created']} column(s) added.";
+        if (!empty($stats['warnings'])) {
+            $msg .= ' Warnings: ' . implode(' | ', $stats['warnings']);
+        }
+
+        return redirect()
+            ->route('schema.database', ['project' => $project->slug, 'database' => $database->name])
+            ->with('import_success', $msg);
     }
 }

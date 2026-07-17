@@ -137,6 +137,25 @@ PromptID: `11`
 <hr>
 
 
+### 2026-07-17 
+
+[NEW SESSION]
+```
+This is a LaravelPHP-based Web-APplication called SchemaBuilder.
+
+i currently have two "export-methods" (review DtabaseExportService and web.php and SchemaController).
+
+Your Task now (as a Laravel and Frontend-Development Export) is to add a simple, functional dropdown to the "database"-view, using which the user can select what to export to.
+
+Your Task is also to add an "import"-feature (Laravel/SQL/...) by "reversing" the "DatabaseExport" ... ; also: add more export-options(what to export to) ...
+
+If you make any other findings: pelase create a file at llm_output/{date}_{time}_{slug}.md.
+```
+Model: `Claude Sonnet 4.6 (Thinking)`
+PromptID: `12`
+<hr>
+
+
 <!-- [NEW SESSION]
 ```
 I have a Laravel Codebase here (project name: SchemaBuilder).

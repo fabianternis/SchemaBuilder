@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
         // IMPORTANT: Literal sub-routes must come BEFORE {table:name} wildcard to avoid conflicts
         Route::get('/{project:slug}/{database:name}/_tables', [SchemaController::class, 'tablesList'])->name('tables.list');
         Route::get('/{project:slug}/{database:name}/export/{to?}', [SchemaController::class, 'export'])->name('export');
+        Route::post('/{project:slug}/{database:name}/import', [SchemaController::class, 'import'])->name('import');
         Route::get('/{project:slug}/{database:name}/new', [SchemaController::class, 'createTable'])->name('table.create');
         Route::post('/{project:slug}/{database:name}/new', [SchemaController::class, 'storeTable'])->name('table.store');
 
