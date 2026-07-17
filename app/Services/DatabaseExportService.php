@@ -214,7 +214,7 @@ class DatabaseExportService
             if ($column->is_unique)  { $def .= "->unique()"; }
             if ($column->is_primary) { $def .= "->primary()"; }
 
-            $output_string .= $def . ";\n";
+            $output_string .= $def . ";\n?>";
         }
 
         foreach ($columns as $column) {
