@@ -1,8 +1,5 @@
 - laoyut on auth views
-- resource.templating (forms, index, show) ...
-- breadcrumbs (easy bc. routes)
 - GitHub+HackClub OAUTH
 - Update url on rename (e.g. column/table) ...
 - a "viewer" like phpMyAdmin has
-- Add more export-options (e.g. Laravel, SQL, ... (whatever people use))
-- Allow "import" with multiple options (SQL, Laravel, ...)
+- if foreing_key points, table should be later ...

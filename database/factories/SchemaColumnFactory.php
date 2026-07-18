@@ -2,8 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\SchemaColumn;
-use App\Models\SchemaTable;
+use App\Models\{SchemaColumn, SchemaTable};
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

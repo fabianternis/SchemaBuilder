@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Login</h1>
 <form action="{{ route('auth.login') }}" method="POST">
+    <h1>Login</h1>
     @csrf
     <input name="email" type="email" placeholder="Email">
     <input name="password" type="password" placeholder="Password">
-    <button>Login</button>
+    <input type="submit" value="Log in">
 </form>
 @endsection
