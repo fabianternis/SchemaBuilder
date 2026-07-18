@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\{Project, SchemaDatabase as Database, SchemaTable as Table, SchemaColumn as Column};
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
-use App\Services\DatabaseExportService;
-use App\Services\DatabaseImportService;
+use Illuminate\Support\{Str, Facades\Auth};
+use App\Services\{DatabaseExportService, DatabaseImportService};
 
 class SchemaController extends Controller
 {

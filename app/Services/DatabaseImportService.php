@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\{SchemaDatabase as Database, SchemaTable as Table, SchemaColumn as Column};
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 class DatabaseImportService
 {

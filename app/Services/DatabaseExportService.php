@@ -214,7 +214,7 @@ class DatabaseExportService
             if ($column->is_unique)  { $def .= "->unique()"; }
             if ($column->is_primary) { $def .= "->primary()"; }
 
-            $output_string .= $def . ";\n?>";
+            $output_string .= $def . ";\n";
         }
 
         foreach ($columns as $column) {
@@ -233,6 +233,8 @@ class DatabaseExportService
         $output_string .= "        });\n    }\n\n";
         $output_string .= "    public function down(): void\n    {\n";
         $output_string .= "        Schema::dropIfExists('{$table->name}');\n    }\n};\n";
+
+        $output_string .= $def . "\n?>"; /* the "includes" are still used multiple times, so this makes just a small difference ... */
 
         return $output_string;
     }
