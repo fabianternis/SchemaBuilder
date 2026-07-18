@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\{HasUlids, HasFactory, Model, SoftDeletes};
+use Illuminate\Database\Eloquent\{Concerns\HasUlids, Model, Factories\HasFactory, SoftDeletes};
 use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany};
 
 class SchemaDatabase extends Model
