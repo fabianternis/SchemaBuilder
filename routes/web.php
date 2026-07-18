@@ -21,6 +21,14 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/signup', [AuthController::class, 'showSignup'])->name('auth.signup');
     Route::post('/signup', [AuthController::class, 'signup']);
+
+    // ── GitHub OAuth ──────────────────────────────────────────────────────────
+    Route::get('/auth/github', [AuthController::class, 'redirectToGitHub'])->name('auth.github');
+    Route::get('/auth/github/callback', [AuthController::class, 'handleGitHubCallback'])->name('auth.github.callback');
+
+    // ── HackClub OAuth ────────────────────────────────────────────────────────
+    Route::get('/auth/hackclub', [AuthController::class, 'redirectToHackClub'])->name('auth.hackclub');
+    Route::get('/auth/hackclub/callback', [AuthController::class, 'handleHackClubCallback'])->name('auth.hackclub.callback');
 });
 
 Route::middleware('auth')->group(function () {

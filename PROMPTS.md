@@ -165,4 +165,38 @@ I have Resource template-views (e.g. used in ProjectCOntroller). now: please upd
 Model: ``
 PromptID: `` --> 
 
+
+### 2026-07-18
+
+[NEW SESSION]
+```
+This is a LaravelPHP-based Web-APplication called SchemaBuilder.
+
+I am in a "finished" state, i think. 
+YOur Task as a Senior Laravel Export is to review teh entire application, perform fixes and write a review to llm_output/{formatted_as_the_other_files}.md.
+
+also write a review to the same output-dir.
+```
+Model: `Claude Sonnet 4.6 (Thinking)`
+PromptID: `13`
+<hr>
+
+
+
+[NEW SESSION]
+```
+This is a LaravelPHP-based Web-APplication called SchemaBuilder.
+
+Please Add new auth-routes and update the AuthController by adding OAuth for both GitHub and HackClub.
+
+Thanks!
+
+if you have any additional, important output: llm_output/{formatted_as_the_other_files}.md.
+```
+Model: `Claude Sonnet 4.6 (Thinking)`
+PromptID: `14`
+<hr>
+
+
+
 _**note:** PromptID is for reference from ROADMAP.md_
