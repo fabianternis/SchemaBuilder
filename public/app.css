@@ -19,9 +19,9 @@
     --text-secondary:#6b6b67;
     --text-muted:    #a3a3a0;
 
-    /* Accent (soft indigo) */
-    --accent:        #5b5cf6;
-    --accent-hover:  #4a4ae0;
+    /* Accent (teal) */
+    --accent:        #0a9396;
+    --accent-hover:  #005f73;
     --accent-text:   #ffffff;
 
     /* Danger */
@@ -306,6 +306,7 @@ input[type="email"],
 input[type="password"],
 input[type="url"],
 input[type="number"],
+input[type="submit"],
 select,
 textarea {
     width: 100%;

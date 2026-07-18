@@ -31,7 +31,9 @@
             <thead>
                 <tr>
                     @foreach($schema['columns'] as $column)
-                    <th>{{ $column['name'] }}</th>
+                        @if($column['on_index'])
+                            <th>{{ $column['name'] }}</th>
+                        @endif
                     @endforeach
                     <th class="col-actions-header">Actions</th>
                 </tr>
