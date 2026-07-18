@@ -234,8 +234,6 @@ class DatabaseExportService
         $output_string .= "    public function down(): void\n    {\n";
         $output_string .= "        Schema::dropIfExists('{$table->name}');\n    }\n};\n";
 
-        $output_string .= $def . "\n?>"; /* the "includes" are still used multiple times, so this makes just a small difference ... */
-
         return $output_string;
     }
 

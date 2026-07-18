@@ -79,6 +79,8 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
+        abort_if($project->owner_id !== auth()->id(), 403);
+
         $schema = (new Project())->schema;
         $item = $project;
 
@@ -87,6 +89,8 @@ class ProjectController extends Controller
 
     public function update(Request $request, Project $project)
     {
+        abort_if($project->owner_id !== auth()->id(), 403);
+
         $schema = (new Project())->schema;
         $validated = $this->validateSchema($request, $schema);
 
@@ -108,6 +112,8 @@ class ProjectController extends Controller
 
     public function destroy(Project $project)
     {
+        abort_if($project->owner_id !== auth()->id(), 403);
+
         $schema = (new Project())->schema;
         $project->delete();
 

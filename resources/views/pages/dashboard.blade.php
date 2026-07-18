@@ -30,6 +30,17 @@
     </div>
 
 
-    <a href="{{ route('new') }}">"NEW"</a>
+    <div class="section-card">
+        <div class="section-title">Quick Start</div>
+        <p style="margin-bottom: 1rem;">Create your first database schema or navigate to your projects to continue working.</p>
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <a href="{{ route('new') }}" class="btn-primary">
+                <x-heroicon-o-plus class="btn-icon-svg" /> New Database
+            </a>
+            <a href="{{ route('projects.index') }}" class="btn-secondary">
+                <x-heroicon-o-folder class="btn-icon-svg" /> My Projects
+            </a>
+        </div>
+    </div>
 </div>
 @endsection
