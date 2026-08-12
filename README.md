@@ -85,3 +85,7 @@ I was not successful finding one, so i decided to create a Schema-designing appl
 - **IF Using a hosted database**: <br> `nano .env` and add db-credentials (just open .env in some way and add the db-credentials)
 - `composer install--no-dev && php artisan key:generate --force && php artisan migrate:fresh --seed --force`
 - Set the "host base-path" to the `public/`-folder of the project-folder
+
+
+## License
+This Applicatin is under the GNU General Public License (See [LICENSE](LICENSE)).
