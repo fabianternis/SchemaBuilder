@@ -2,6 +2,7 @@
 
 ## Info
 SchemaBuilder is a web application built on the Laravel PHP framework, engineered for designing, managing, and structuring relational database schemas. 
+All AI-use is reported in [PROMPTS.md](PROMPTS.md)
 
 ### Project Context
 SchemaBuilder is a project developed for [Macondo](https://macondo.hackclub.com/projects/13022), a [Hack Club](https://hackclub.com) program.
