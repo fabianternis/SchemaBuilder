@@ -36,7 +36,7 @@ On there you have the options to:
 When Clicking "New Database" on the Dashboard, you ill end-up on a form.
 <img width="957" height="607" alt="Screenshot 2026-08-12 at 12 14 31" src="https://github.com/user-attachments/assets/b8fb992b-bb64-43ae-9f7c-9b3a6c431e18" /><br>
 If you already have Projects, they will be listed in the "Project"-input.
-If "-- Create New --" is selected and something is put in the "Project Name" input below, a new project will be created and the database will be assigned to it. If you select an existing Project, teh database will be linked to taht Project.
+If "-- Create New --" is selected and something is put in the "Project Name" input below, a new project will be created and the database will be assigned to it. If you select an existing Project, the database will be linked to that Project.
 
 ### Database Overview
 After Creating a database (or just selecting the database from the Project-page) - there are multiple ways to get here
@@ -47,7 +47,16 @@ On here, you can import schema from SQL, JSON and CSV (which are also export-opt
 After creating a table or clicking on a table, you end up here.
 <img width="957" height="603" alt="Screenshot 2026-08-12 at 12 26 33" src="https://github.com/user-attachments/assets/deb584d5-8d91-44d2-8dd6-7df2c03eb881" />
 
-By clicking on "Add Column", you add a new item to the "Columns Container". when anything chnages on the "Columns Container", after 10 seconds of nothing chnaging, The chnages get auto-daved to the database. (tehre may be settings to change this in teh future).
+By clicking on "Add Column", you add a new item to the "Columns Container". when anything changes on the "Columns Container", after 10 seconds of nothing changing, The changes get auto-daved to the database. (there may be settings to change this in the future).
+
+### Schema Export
+When you are ready to export your Schema, you can just go back to the "database overview".
+<img width="957" height="761" alt="Screenshot 2026-08-12 at 12 34 51" src="https://github.com/user-attachments/assets/573ca58a-f5f0-45d6-b826-c1a348b32bc1" />
+On there you have the options to export the schema as:
+- SQL ("Code")
+- Laravel Migration (The main PHP framwork, i use and the reason, this application even exists)
+- JSON
+- CSV
 
 
 ## Development Roadmap
