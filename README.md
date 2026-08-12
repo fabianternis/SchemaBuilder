@@ -22,6 +22,12 @@ The database-structure of the DatabaseSchemaBuilder supports a nested "tree" tha
 *   **Tables (`schema_tables`):** Data structures belonging to a specific database.
 *   **Columns (`schema_columns`):** Granular field definitions belonging to tables. Tracks data types, constraints (`is_nullable`, `is_primary`, `is_unique`, `auto_increment`), defaults, and foreign key references (`referenced_table_id`, `on_cascade`). Belongs to table and optionally to another "foreign" table.
 
+## What is this even and what is it for?
+SchemaBuilder is a Application that allows you to design your Database-Schema while maintaining a better overview that you may have when just making migrations without a clear plan.
+It is a user-friendly(at least for me (becuase i made it as i wanted it)) Application that links columns, tables and databases (also <!--foreign-keys and -->foreign-tables) and allows for "Just a better Scheming Experience"(whatever the verb is for designing database-schemas).
+This is not a application you would use, creating a simple users-table or a minimalistic todo-list (while you could).
+This is for more complex applications and also quick testing (becuase you can export your schema to SQL or laravel-migrations with one click).
+
 ## Application Use Documentation
 Just the very **Basics**
 ### Dashboard
