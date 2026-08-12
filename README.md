@@ -15,7 +15,15 @@ SchemaBuilder is a project developed for [Macondo](https://macondo.hackclub.com/
 ## Database Schema Structure
 The database-structure of the DatabaseSchemaBuilder supports a nested "tree" that links databases withe their tables and the tables columns to a Project. The complete breakdown is in [SCHEMA.md](SCHEMA.md).
 
+### Base Items
+*   **Users (`users`):** identified by ULIDs, Supports standard email verification and tracks session data (`sessions`, `password_reset_tokens`).
+*   **Projects (`projects`):** High-level containers owned by users (morph relationship via `owner_id` / `owner_type`). Stores metadata, deployment URLs, and JSON preferences(not really used *yet*).
+*   **Databases (`schema_databases`):** Logical schema groups bound to a specific project. A default database is auto-generated upon project creation.
+*   **Tables (`schema_tables`):** Data structures belonging to a specific database.
+*   **Columns (`schema_columns`):** Granular field definitions belonging to tables. Tracks data types, constraints (`is_nullable`, `is_primary`, `is_unique`, `auto_increment`), defaults, and foreign key references (`referenced_table_id`, `on_cascade`). Belongs to table and optionally to another "foreign" table.
+
 ## Application Use Documentation
+Just the very **Basics**
 ### Dashboard
 After registering/authenticating in any way, you will end-up on the `/dashboard`-url where you will see the following interface
 <img width="957" height="287" alt="Screenshot 2026-08-12 at 12 12 51" src="https://github.com/user-attachments/assets/7990eca3-f037-4b3c-801b-6df98cf143bc" /><br>
@@ -35,14 +43,12 @@ After Creating a database (or just selecting the database from the Project-page)
 <img width="957" height="852" alt="Screenshot 2026-08-12 at 12 22 42" src="https://github.com/user-attachments/assets/05e7c365-6f8b-4eb3-abad-60891c025f8f" /><br>
 On here, you can import schema from SQL, JSON and CSV (which are also export-options on the application).
 
+### Table Overview
+After creating a table or clicking on a table, you end up here.
+<img width="957" height="603" alt="Screenshot 2026-08-12 at 12 26 33" src="https://github.com/user-attachments/assets/deb584d5-8d91-44d2-8dd6-7df2c03eb881" />
 
+By clicking on "Add Column", you add a new item to the "Columns Container". when anything chnages on the "Columns Container", after 10 seconds of nothing chnaging, The chnages get auto-daved to the database. (tehre may be settings to change this in teh future).
 
-### Base Items
-*   **Users (`users`):** identified by ULIDs, Supports standard email verification and tracks session data (`sessions`, `password_reset_tokens`).
-*   **Projects (`projects`):** High-level containers owned by users (morph relationship via `owner_id` / `owner_type`). Stores metadata, deployment URLs, and JSON preferences(not really used *yet*).
-*   **Databases (`schema_databases`):** Logical schema groups bound to a specific project. A default database is auto-generated upon project creation.
-*   **Tables (`schema_tables`):** Data structures belonging to a specific database.
-*   **Columns (`schema_columns`):** Granular field definitions belonging to tables. Tracks data types, constraints (`is_nullable`, `is_primary`, `is_unique`, `auto_increment`), defaults, and foreign key references (`referenced_table_id`, `on_cascade`). Belongs to table and optionally to another "foreign" table.
 
 ## Development Roadmap
 The steps i took in the project (until some point) can be found in [ROADMAP.md](ROADMAP.md).
@@ -50,8 +56,6 @@ The steps i took in the project (until some point) can be found in [ROADMAP.md](
 ## Inspiration
 I searched for a solution to design database-schemas for my Projects easily while maintaining an "overlook".
 I was not successful finding one, so i decided to create a Schema-designing application myself.
-
-
 
 
 ## Host Yourself
