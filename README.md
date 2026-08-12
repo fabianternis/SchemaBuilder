@@ -120,11 +120,14 @@ On there you have the options to export the schema as:
 
 
 ## Development Roadmap
-The steps i took in the project (until some point) can be found in [ROADMAP.md](ROADMAP.md).
+The **base** steps i took in the project (until some point) can be found in [ROADMAP.md](ROADMAP.md).
+
 
 ## Inspiration
 I searched for a solution to design database-schemas for my Projects easily while maintaining an "overlook".
 I was not successful finding one, so i decided to create a Schema-designing application myself.
+
+Also: in school i also think about how i WOULD make a database-schema for a specific project/in a specific situation and write it down on paper. With this Application i am close to **unable** to loose those schema-ideas (except for the database getting deleted or corrupted or sth.).
 
 <!--
 ## Host Yourself / "Seup"
