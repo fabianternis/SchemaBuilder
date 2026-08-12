@@ -22,11 +22,63 @@ The database-structure of the DatabaseSchemaBuilder supports a nested "tree" tha
 *   **Tables (`schema_tables`):** Data structures belonging to a specific database.
 *   **Columns (`schema_columns`):** Granular field definitions belonging to tables. Tracks data types, constraints (`is_nullable`, `is_primary`, `is_unique`, `auto_increment`), defaults, and foreign key references (`referenced_table_id`, `on_cascade`). Belongs to table and optionally to another "foreign" table.
 
+## Host Yourself / Setup
+
+### Requirements
+
+* Server running PHP 8.3+
+* Composer installed.
+* Database system (MySQL, MariaDB, PostgreSQL, or SQLite).
+* SSH/Terminal access to the server environment.
+* Web server (Nginx/Apache/Caddy).
+
+### Installation Protocol
+
+1. **Clone the Repository:**
+```bash
+git clone https://github.com/fabianternis/schemabuilder.git .
+```
+
+2. **Install PHP Dependencies:**
+```bash
+composer install --no-dev --optimize-autoloader
+```
+
+3. **Environment Configuration:**
+```bash
+cp .env.example .env
+```
+
+Edit the `.env` file to input exact database credentials and environmental variables (`DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`).
+<br>
+4. **Generate Application Key:**
+```bash
+php artisan key:generate --force
+```
+
+5. **Execute Database Migrations & Seeding:**
+```bash
+php artisan migrate:fresh --force
+```
+
+6. **Set Directory Permissions:**
+Ensure the web server has write access to necessary directories to prevent systemic I/O failures.
+```bash
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+```
+
+*(Note: Adjust the user/group target to align with your host web server parameters).*
+<br>
+7. **Web Server Configuration:**
+Set the web server's document root to target the `public/` directory within the cloned project root.
+
+
 ## What is this even and what is it for?
-SchemaBuilder is a Application that allows you to design your Database-Schema while maintaining a better overview that you may have when just making migrations without a clear plan.
-It is a user-friendly(at least for me (becuase i made it as i wanted it)) Application that links columns, tables and databases (also <!--foreign-keys and -->foreign-tables) and allows for "Just a better Scheming Experience"(whatever the verb is for designing database-schemas).
-This is not a application you would use, creating a simple users-table or a minimalistic todo-list (while you could).
-This is for more complex applications and also quick testing (becuase you can export your schema to SQL or laravel-migrations with one click).
+SchemaBuilder is a Application that allows you to design your Database-Schema while maintaining a better overview that you may have when just making migrations without a clear plan.<br>
+It is a user-friendly(at least for me (becuase i made it as i wanted it)) Application that links columns, tables and databases (also <!--foreign-keys and -->foreign-tables) and allows for "Just a better Scheming Experience"(whatever the verb is for designing database-schemas).<br>
+This is not a application you would use, creating a simple users-table or a minimalistic todo-list (while you could).<br>
+This is for more complex applications and also quick testing (becuase you can export your schema to SQL or laravel-migrations with one click).<br>
 
 ## Application Use Documentation
 Just the very **Basics**
@@ -72,20 +124,21 @@ The steps i took in the project (until some point) can be found in [ROADMAP.md](
 I searched for a solution to design database-schemas for my Projects easily while maintaining an "overlook".
 I was not successful finding one, so i decided to create a Schema-designing application myself.
 
-
-## Host Yourself
+<!--
+## Host Yourself / "Seup"
 ### what you need
 - Server that supports PHP
 - Optionally(recommended): MySQL/MarinaDB Database (PostgreSQL should also work)
 - ssh-access to the server
 
+
 ### steps
 - Clone the repo to the server <br> example: `git clone https://github.com/fabianternis/schemabuilder.git .`(when inside the "project folder")
 - `cp .env.example .env`
 - **IF Using a hosted database**: <br> `nano .env` and add db-credentials (just open .env in some way and add the db-credentials)
-- `composer install--no-dev && php artisan key:generate --force && php artisan migrate:fresh --seed --force`
+- `composer install--no-dev && php artisan key:generate --force && php artisan migrate:fresh --force`
 - Set the "host base-path" to the `public/`-folder of the project-folder
 
-
+-->
 ## License
 This Applicatin is under the GNU General Public License (See [LICENSE](LICENSE)).
