@@ -28,3 +28,19 @@ The steps i took in the project (until some point) can be found in [ROADMAP.md](
 ## Inspiration
 I searched for a solution to design database-schemas for my Projects easily while maintaining an "overlook".
 I was not successful finding one, so i decided to create a Schema-designing application myself.
+
+
+
+
+## Host Yourself
+### what you need
+- Server that supports PHP
+- Optionally(recommended): MySQL/MarinaDB Database (PostgreSQL should also work)
+- ssh-access to the server
+
+### steps
+- Clone the repo to the server <br> example: `git clone https://github.com/fabianternis/schemabuilder.git .`(when inside the "project folder")
+- `cp .env.example .env`
+- **IF Using a hosted database**: <br> `nano .env` and add db-credentials (just open .env in some way and add the db-credentials)
+- `composer install--no-dev && php artisan key:generate --force && php artisan migrate:fresh --seed --force`
+- Set the "host base-path" to the `public/`-folder of the project-folder
