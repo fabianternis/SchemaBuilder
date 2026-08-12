@@ -24,3 +24,7 @@ The database-structure of the DatabaseSchemaBuilder supports a nested "tree" tha
 
 ## Development Roadmap
 The steps i took in the project (until some point) can be found in [ROADMAP.md](ROADMAP.md).
+
+## Inspiration
+I searched for a solution to design database-schemas for my Projects easily while maintaining an "overlook".
+I was not successful finding one, so i decided to create a Schema-designing application myself.
