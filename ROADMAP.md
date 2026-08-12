@@ -1,4 +1,4 @@
-# The Entire Project Roadmap
+# The Entire Project Roadmap (until some Point)
 
 ## 1 Schema
 ### 1.1 I created SCHEMA.md wit hteh initial tables `users` and `projects`
