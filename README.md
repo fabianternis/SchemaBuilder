@@ -21,3 +21,5 @@ SchemaBuilder is a project developed for [Macondo](https://macondo.hackclub.com/
 * **Frontend:** Laravel Blade views (layouts, components, "resource templates"(self-made)).
 * **Build System:** Native Laravel tooling (NodeJS removed becuase the webserver does not support it and i am not a fan of mass-package-installs).
 * **Authentication:** Custom `AuthController` handling standard credentials, with schema provisions for future GitHub OAuth integration. Supports login from BOTH email and username.
+
+_I looked up if it was **build** or **built**_
