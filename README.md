@@ -18,7 +18,7 @@ The database-structure of the DatabaseSchemaBuilder supports a nested "tree" tha
 ## Application Use Documentation
 ### Dashboard
 After registering/authenticating in any way, you will end-up on the `/dashboard`-url where you will see the following interface
-<img width="957" height="287" alt="Screenshot 2026-08-12 at 12 12 51" src="https://github.com/user-attachments/assets/7990eca3-f037-4b3c-801b-6df98cf143bc" />
+<img width="957" height="287" alt="Screenshot 2026-08-12 at 12 12 51" src="https://github.com/user-attachments/assets/7990eca3-f037-4b3c-801b-6df98cf143bc" /><br>
 On there you have the options to:
 - open projects-list
 - Create new database(and optionally also a Project)
@@ -26,13 +26,13 @@ On there you have the options to:
 
 ### Database Creation
 When Clicking "New Database" on the Dashboard, you ill end-up on a form.
-<img width="957" height="607" alt="Screenshot 2026-08-12 at 12 14 31" src="https://github.com/user-attachments/assets/b8fb992b-bb64-43ae-9f7c-9b3a6c431e18" />
+<img width="957" height="607" alt="Screenshot 2026-08-12 at 12 14 31" src="https://github.com/user-attachments/assets/b8fb992b-bb64-43ae-9f7c-9b3a6c431e18" /><br>
 If you already have Projects, they will be listed in the "Project"-input.
 If "-- Create New --" is selected and something is put in the "Project Name" input below, a new project will be created and the database will be assigned to it. If you select an existing Project, teh database will be linked to taht Project.
 
 ### Database Overview
 After Creating a database (or just selecting the database from the Project-page) - there are multiple ways to get here
-<img width="957" height="852" alt="Screenshot 2026-08-12 at 12 22 42" src="https://github.com/user-attachments/assets/05e7c365-6f8b-4eb3-abad-60891c025f8f" />
+<img width="957" height="852" alt="Screenshot 2026-08-12 at 12 22 42" src="https://github.com/user-attachments/assets/05e7c365-6f8b-4eb3-abad-60891c025f8f" /><br>
 On here, you can import schema from SQL, JSON and CSV (which are also export-options on the application).
 
 
