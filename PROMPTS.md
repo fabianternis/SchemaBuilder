@@ -199,4 +199,13 @@ PromptID: `14`
 
 
 
+[NEW SESSION]
+```
+I have this Laravel-application ("SchemaBuilder").
+I have the problem taht there are soem "invlaid staates" created (e.g. a largeText with a set lenght OR a nullabel primary key). I want to add "validation" in both Frontend AND backend.
+I already wrote something in ToDos.md. Please read that and then create something in llm_output/ (filename format like teh otehr files) that tells me what are possible implementation-options and best-practices and co.
+```
+Model: `Claude Sonnet 4.6 (Thinking)`
+PromptID: `15`
+
 _**note:** PromptID is for reference from ROADMAP.md_
