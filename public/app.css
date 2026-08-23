@@ -1320,3 +1320,19 @@ svg.import-chosen-icon {
     transform: none;
     color: var(--accent);
 }
+
+.auth-container {
+    display: flex;
+    flex-direction: column;
+
+    background-color: var(--surface-2);
+    padding: 12px;
+    border-radius: 16px;
+    /* gap: 8px; */
+
+    .btn-secondary {
+        width: 100%;
+        /* align-content: center; */
+        /* text-align: center; */
+    }
+}

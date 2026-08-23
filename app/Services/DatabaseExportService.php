@@ -203,16 +203,16 @@ class DatabaseExportService
 
             $def = "            \$table->{$method}({$args})";
 
-            if ($column->auto_increment)  { $def .= "->autoIncrement()"; }
-            if ($column->is_nullable)     { $def .= "->nullable()"; }
+            if ($column->auto_increment && false)  { $def .= "->autoIncrement()"; }
+            if ($column->is_nullable && false)     { $def .= "->nullable()"; }
 
             if ($column->default !== null) {
                 $defaultValue = is_numeric($column->default) ? $column->default : "'{$column->default}'";
                 $def .= "->default({$defaultValue})";
             }
 
-            if ($column->is_unique)  { $def .= "->unique()"; }
-            if ($column->is_primary) { $def .= "->primary()"; }
+            if ($column->is_unique && false)  { $def .= "->unique()"; }
+            if ($column->is_primary && false) { $def .= "->primary()"; }
 
             $output_string .= $def . ";\n";
         }
@@ -243,6 +243,7 @@ class DatabaseExportService
 
     private function tableToArray(Table $table): array
     {
+        // ToDo: Add validation
         $columns = $table->columns()->orderBy('order_index')->get();
 
         return [
@@ -264,6 +265,7 @@ class DatabaseExportService
 
     private function exportDatabaseJson(Database $database, $tables): string
     {
+        // ToDo: DEFINITELY add validation ...
         $schema = [
             'database' => $database->name,
             'tables'   => $tables->map(fn ($t) => $this->tableToArray($t))->values()->toArray(),
@@ -278,6 +280,8 @@ class DatabaseExportService
 
     private function exportTableCsv(Table $table): string
     {
+        // ToDo: add validation
+
         $rows    = [];
         $rows[]  = ['table', 'column', 'type', 'length', 'nullable', 'primary', 'unique', 'auto_increment', 'default', 'on_cascade', 'references_table'];
 
@@ -305,6 +309,8 @@ class DatabaseExportService
 
     private function exportDatabaseCsv(Database $database, $tables): string
     {
+
+    // ToDo: add "validation"
         $rows   = [];
         $rows[] = ['table', 'column', 'type', 'length', 'nullable', 'primary', 'unique', 'auto_increment', 'default', 'on_cascade', 'references_table'];
 

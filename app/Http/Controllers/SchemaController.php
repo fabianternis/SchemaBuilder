@@ -116,6 +116,11 @@ class SchemaController extends Controller
             'columns.*.referenced_table_id' => ['nullable', 'string'],
         ]);
 
+        // ToDo:
+        // "hijack" this with the getAvailableOptions() ...
+        // "this" means teh valiate() above
+        // or the foreach-loop following
+
         // Rename table if name changed
         if ($table->name !== $validated['name']) {
             $table->update(['name' => $validated['name']]);
@@ -294,9 +299,7 @@ class SchemaController extends Controller
         $ext      = $exportService->getExtension($to);
         $filename = "{$database->name}_schema.{$ext}";
 
-        return response($output, 200)
-            ->header('Content-Type', $mime)
-            ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
+        return response($output, 200)->header('Content-Type', $mime)->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
     }
 
     // -------------------------------------------------------------------------
@@ -331,8 +334,65 @@ class SchemaController extends Controller
             $msg .= ' Warnings: ' . implode(' | ', $stats['warnings']);
         }
 
-        return redirect()
-            ->route('schema.database', ['project' => $project->slug, 'database' => $database->name])
-            ->with('import_success', $msg);
+        return redirect()->route('schema.database', ['project' => $project->slug, 'database' => $database->name])->with('import_success', $msg);
+    }
+
+    // public function validOptionsForType($column_type)
+    // public function validOptionForType($option, $column_type)
+    // {
+    //     $not_allowed = [
+    //         'lonxtext' => [
+    //             'lenght',
+    //         ],
+    //     ]; // $denied is not that "fitting" ...
+    // }
+
+    public function getAvailableOptions($column_type)
+    {
+        // ToDo: maybe a public static array instead of this function ... (or BOTH ...)
+
+        // $array = [
+        // $allowed = [
+        //     // note: null means ALL
+        //     'lenght' => [
+        //         'text',
+        //         // 'enum',
+        //     ],
+        //     'is_primary' => [
+        //         // 'enum', // i think - this was when i had a brain-lag
+        //     ],
+        //     'on_cascade' => [],
+        //     'name' => null,
+        //     'type' => null, // eyvery type has to have a type ... else it would not work ...
+        //     'is_unique' => [ // NOT enum ...
+
+        //     ],
+
+        // ];
+        $allowed = [
+            // null means: all allowed
+            'lenght' => [
+                'text' => true,
+                'enum' => false,
+            ],
+
+            'is_primary' => [
+                'enum' => false,
+                'text' => true,
+                // 'uuid' => true, // isnt a real thing, is it? - laravel just made it easy ! ... ?
+                'lageText' => true,
+            ],
+
+            'on_cascade' => [],
+            'name' => null,
+            'type' => null, // eyvery type has to have a type ... else it would not work ...
+            
+            'is_unique' => [ // NOT enum ...
+                'text' => true,
+                'enum' => true,
+                'largeText' => true,
+                // 'uuid' => true, // not real ...
+            ],
+        ];
     }
 }
