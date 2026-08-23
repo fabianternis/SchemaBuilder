@@ -309,8 +309,8 @@ class DatabaseExportService
 
     private function exportDatabaseCsv(Database $database, $tables): string
     {
+        // ToDo: add "validation"
 
-    // ToDo: add "validation"
         $rows   = [];
         $rows[] = ['table', 'column', 'type', 'length', 'nullable', 'primary', 'unique', 'auto_increment', 'default', 'on_cascade', 'references_table'];
 
@@ -323,7 +323,7 @@ class DatabaseExportService
                     $column->name,
                     $column->type,
                     $column->length ?? '',
-                    $column->is_nullable ? 'YES' : 'NO',
+                    $column->is_nullable ?'YES' : 'NO',
                     $column->is_primary ? 'YES' : 'NO',
                     $column->is_unique  ? 'YES' : 'NO',
                     $column->auto_increment ? 'YES' : 'NO',
