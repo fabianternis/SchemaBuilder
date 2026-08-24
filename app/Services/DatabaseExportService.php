@@ -301,6 +301,7 @@ class DatabaseExportService
                 $column->default ?? '',
                 $column->on_cascade ?? '',
                 $referencedTable ?? '',
+                
             ];
         }
 

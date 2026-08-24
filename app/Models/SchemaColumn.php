@@ -32,6 +32,68 @@ class SchemaColumn extends Model
         'order_index' => 'integer',
     ];
 
+    public const VALID_TYPES = [
+        'bigint',
+        'bigIncrements',
+        'binary',
+        'boolean',
+        'char',
+        'date',
+        'dateTime',
+        'decimal',
+        'double',
+        'enum',
+        'float',
+        'foreignId',
+        'id',
+        'integer',
+        'json',
+        'jsonb',
+        'longText',
+        'mediumInteger',
+        'mediumText',
+        'nullableTimestamps',
+        'smallInteger',
+        'softDeletes',
+        'string',
+        'text',
+        'time',
+        'timestamp',
+        'timestamps',
+        'tinyInteger',
+        'tinyText',
+        'unsignedBigInteger',
+        'unsignedInteger',
+        'uuid',
+        'ulid',
+        'year',
+    ];
+
+    public static array $allowedOptions = [
+        'length' => [
+            'varchar', 'string', 'char', 'decimal', 'float', 'double',
+            // NOT: text, longText, mediumText, tinyText, boolean, enum, json, …
+        ],
+        'auto_increment' => [
+            'integer', 'int', 'bigint', 'bigIncrements',
+            'unsignedBigInteger', 'unsignedInteger',
+            'smallInteger', 'mediumInteger', 'tinyInteger',
+        ],
+        'is_primary'  => null,
+        'is_unique'   => null,
+        'is_nullable' => null,
+        'default'     => null,
+        'referenced_table_id' => [
+            'foreignId', 'unsignedBigInteger', 'unsignedInteger',
+            'integer', 'bigint', 'uuid', 'ulid',
+        ],
+    ];
+
+    public function can_be_nullable()
+    {
+        return $this->is_primary;
+    }
+
     public function table(): BelongsTo
     {
         return $this->belongsTo(SchemaTable::class, 'table_id');
