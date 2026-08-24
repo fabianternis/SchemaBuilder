@@ -22,7 +22,7 @@ class DatabaseExportService
     // Database-level helpers
     // -------------------------------------------------------------------------
 
-    public function exportDatabase(Database $database, string $to): string
+    public function exportDatabase(Database $database, string $to, bool $allow_empty_tables): string
     {
         $project = $database->project;
 
@@ -44,7 +44,7 @@ class DatabaseExportService
 
         $output_data = '';
         foreach ($tables as $table) {
-            $output_data .= $this->exportTable($table, $to) . "\n\n";
+            $output_data .= $this->exportTable($table, $to, $allow_empty_tables) . "\n\n";
         }
 
         return $output_data;
@@ -64,11 +64,16 @@ class DatabaseExportService
     // Table-level export (SQL / Laravel)
     // -------------------------------------------------------------------------
 
-    public function exportTable(Table $table, string $to): string
+    public function exportTable(Table $table, string $to, bool $allow_empty = false): string
     {
         $output_string = '';
 
-        if ((!isset($to)) || (strtolower($to) === 'sql')) {
+        if (($table->columns->count() < 2) && !$allow_empty) {
+            // just remembered i could have implemented this at the exportDatabase()-level ...
+            // should minimum be 1 or 2 ?
+            $output_string .= ''; // Whated to make a "code comment" but am too lazy to make the comment function with every export-method ...
+            $user_message = 'Some Table(s) have not enough columns to be ready to be exported';
+        } elseif ((!isset($to)) || (strtolower($to) === 'sql')) {
             $output_string = $this->exportTableSql($table);
 
         } elseif (strtolower($to) === 'laravel') {

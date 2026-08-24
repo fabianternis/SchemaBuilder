@@ -326,6 +326,11 @@ textarea {
     }
 }
 
+input[type="checkbox"] {
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
 select { cursor: pointer; }
 textarea { resize: vertical; min-height: 80px; }
 
@@ -1207,6 +1212,35 @@ dialog {
     transform: translateY(0);
 }
 
+.export-dropdown-option {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+}
+
+.export-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    user-select: none;
+    transition: color var(--transition);
+
+    &:hover {
+        color: var(--text);
+    }
+
+    input[type="checkbox"] {
+        width: 14px;
+        height: 14px;
+        accent-color: var(--accent);
+        cursor: pointer;
+    }
+}
+
 .export-dropdown-label {
     font-size: 10px;
     font-weight: 700;
@@ -1359,15 +1393,11 @@ svg.import-chosen-icon {
 .auth-container {
     display: flex;
     flex-direction: column;
-
     background-color: var(--surface-2);
     padding: 12px;
     border-radius: 16px;
-    /* gap: 8px; */
 
     .btn-secondary {
         width: 100%;
-        /* align-content: center; */
-        /* text-align: center; */
     }
 }

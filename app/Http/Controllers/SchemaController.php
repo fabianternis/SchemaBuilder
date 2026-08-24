@@ -272,16 +272,20 @@ class SchemaController extends Controller
         abort_if($database->project_id !== $project->id, 404);
 
         $to = strtolower($request->route('to') ?? $request->query('to', 'sql'));
-
+        // $_allow_empty_tables = (strtolower($request->route('allow_empty_tables') ?? $request->query('allow_empty_tables', 'false')));
+        // $allow_empty_tables = filter_var($_allow_empty_tables, FILTER_VALIDATE_BOOLEAN);
+        $allow_empty_tables = $request->boolean('allow_empty_tables');
+        
         $validTargets = array_keys(DatabaseExportService::$targets);
         if (!in_array($to, $validTargets, true)) {
             abort(404, "Unknown export format: {$to}");
         }
 
-        $output   = $exportService->exportDatabase($database, $to);
+        $output   = $exportService->exportDatabase($database, $to, $allow_empty_tables);
         $mime     = $exportService->getMimeType($to);
         $ext      = $exportService->getExtension($to);
-        $filename = "{$database->name}_schema.{$ext}";
+        $empty_stuff = $allow_empty_tables ? '' : '_no_empty_tables';
+        $filename = "{$database->name}_schema{$empty_stuff}.{$ext}";
 
         return response($output, 200)->header('Content-Type', $mime)->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
     }

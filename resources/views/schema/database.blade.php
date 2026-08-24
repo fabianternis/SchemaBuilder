@@ -61,9 +61,17 @@
                     <x-heroicon-o-chevron-down class="btn-icon-svg export-chevron" />
                 </button>
                 <ul class="export-dropdown-menu" id="export-dropdown-menu" role="menu" aria-labelledby="export-dropdown-btn">
+                    {{-- Toggle Option --}}
+                    <li class="export-dropdown-option" style="padding: 8px 12px; border-bottom: 1px solid var(--border-color, #e5e7eb);">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; cursor: pointer; user-select: none;">
+                            <input type="checkbox" id="allow-empty-tables-toggle" style="cursor: pointer;">
+                            <span>Include empty tables</span>
+                        </label>
+                    </li>
+
                     <li class="export-dropdown-label">Export as…</li>
                     <li role="menuitem">
-                        <a href="{{ route('schema.export', [$project, $database, 'sql']) }}" class="export-dropdown-item">
+                        <a href="{{ route('schema.export', [$project, $database, 'sql']) }}" class="export-dropdown-item export-link" data-base-url="{{ route('schema.export', [$project, $database, 'sql']) }}">
                             <span class="export-icon export-icon-sql">SQL</span>
                             <span class="export-item-text">
                                 <strong>SQL</strong>
@@ -72,7 +80,7 @@
                         </a>
                     </li>
                     <li role="menuitem">
-                        <a href="{{ route('schema.export', [$project, $database, 'laravel']) }}" class="export-dropdown-item">
+                        <a href="{{ route('schema.export', [$project, $database, 'laravel']) }}" class="export-dropdown-item export-link" data-base-url="{{ route('schema.export', [$project, $database, 'laravel']) }}">
                             <span class="export-icon export-icon-laravel">L</span>
                             <span class="export-item-text">
                                 <strong>Laravel Migration</strong>
@@ -81,7 +89,7 @@
                         </a>
                     </li>
                     <li role="menuitem">
-                        <a href="{{ route('schema.export', [$project, $database, 'json']) }}" class="export-dropdown-item">
+                        <a href="{{ route('schema.export', [$project, $database, 'json']) }}" class="export-dropdown-item export-link" data-base-url="{{ route('schema.export', [$project, $database, 'json']) }}">
                             <span class="export-icon export-icon-json">{}</span>
                             <span class="export-item-text">
                                 <strong>JSON Schema</strong>
@@ -90,7 +98,7 @@
                         </a>
                     </li>
                     <li role="menuitem">
-                        <a href="{{ route('schema.export', [$project, $database, 'csv']) }}" class="export-dropdown-item">
+                        <a href="{{ route('schema.export', [$project, $database, 'csv']) }}" class="export-dropdown-item export-link" data-base-url="{{ route('schema.export', [$project, $database, 'csv']) }}">
                             <span class="export-icon export-icon-csv">CSV</span>
                             <span class="export-item-text">
                                 <strong>CSV</strong>
@@ -282,5 +290,33 @@
         }
     });
 })();
+
+document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.getElementById('allow-empty-tables-toggle');
+    const links = document.querySelectorAll('.export-link');
+
+    if (!toggle) return;
+
+    toggle.closest('.export-dropdown-option')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+
+    toggle.addEventListener('change', () => {
+        const isChecked = toggle.checked;
+
+        links.forEach(link => {
+            const baseUrl = link.dataset.baseUrl;
+            const url = new URL(baseUrl, window.location.origin);
+
+            if (isChecked) {
+                url.searchParams.set('allow_empty_tables', '1');
+            } else {
+                url.searchParams.delete('allow_empty_tables');
+            }
+
+            link.href = url.pathname + url.search;
+        });
+    });
+});
 </script>
 @endsection
