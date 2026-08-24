@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\{Project, SchemaDatabase as Database, SchemaTable as Table, SchemaColumn as Column};
 use Illuminate\Support\{Str, Facades\Auth};
 use App\Services\{DatabaseExportService, DatabaseImportService};
+use App\Http\Requests\UpdateColumnRequest;
+use App\Support\ColumnTypeRules;
 
 class SchemaController extends Controller
 {
@@ -116,11 +118,6 @@ class SchemaController extends Controller
             'columns.*.referenced_table_id' => ['nullable', 'string'],
         ]);
 
-        // ToDo:
-        // "hijack" this with the getAvailableOptions() ...
-        // "this" means teh valiate() above
-        // or the foreach-loop following
-
         // Rename table if name changed
         if ($table->name !== $validated['name']) {
             $table->update(['name' => $validated['name']]);
@@ -134,7 +131,7 @@ class SchemaController extends Controller
 
         $savedColumns = [];
         foreach ($validated['columns'] as $index => $colData) {
-            $attrs = [
+            $attrs = ColumnTypeRules::sanitise([
                 'table_id'            => $table->id,
                 'name'                => $colData['name'],
                 'type'                => $colData['type'],
@@ -147,7 +144,7 @@ class SchemaController extends Controller
                 'on_cascade'          => $colData['on_cascade']       ?? null,
                 'referenced_table_id' => $colData['referenced_table_id'] ?? null,
                 'order_index'         => $index,
-            ];
+            ]);
 
             if (!empty($colData['id'])) {
                 $col = Column::where('id', $colData['id'])->where('table_id', $table->id)->first();
@@ -175,27 +172,14 @@ class SchemaController extends Controller
     // -------------------------------------------------------------------------
     // JSON API: update a single column
     // -------------------------------------------------------------------------
-    public function updateColumn(Request $request, Project $project, Database $database, Table $table, Column $column)
+    public function updateColumn(UpdateColumnRequest $request, Project $project, Database $database, Table $table, Column $column)
     {
         abort_if($project->owner_id !== auth()->id(), 403);
         abort_if($database->project_id !== $project->id, 404);
         abort_if($table->database_id !== $database->id, 404);
         abort_if($column->table_id !== $table->id, 404);
 
-        $validated = $request->validate([
-            'name'                => ['required', 'string', 'max:255'],
-            'type'                => ['required', 'string', 'max:100'],
-            'is_nullable'         => ['boolean'],
-            'is_primary'          => ['boolean'],
-            'is_unique'           => ['boolean'],
-            'auto_increment'      => ['boolean'],
-            'default'             => ['nullable', 'string', 'max:255'],
-            'length'              => ['nullable', 'integer', 'min:1'],
-            'on_cascade'          => ['nullable', 'string', 'max:50'],
-            'referenced_table_id' => ['nullable', 'string'],
-        ]);
-
-        $column->update($validated);
+        $column->update($request->validated());
         $column->load('referencedTable');
 
         return response()->json([
@@ -335,64 +319,5 @@ class SchemaController extends Controller
         }
 
         return redirect()->route('schema.database', ['project' => $project->slug, 'database' => $database->name])->with('import_success', $msg);
-    }
-
-    // public function validOptionsForType($column_type)
-    // public function validOptionForType($option, $column_type)
-    // {
-    //     $not_allowed = [
-    //         'lonxtext' => [
-    //             'lenght',
-    //         ],
-    //     ]; // $denied is not that "fitting" ...
-    // }
-
-    public function getAvailableOptions($column_type)
-    {
-        // ToDo: maybe a public static array instead of this function ... (or BOTH ...)
-
-        // $array = [
-        // $allowed = [
-        //     // note: null means ALL
-        //     'lenght' => [
-        //         'text',
-        //         // 'enum',
-        //     ],
-        //     'is_primary' => [
-        //         // 'enum', // i think - this was when i had a brain-lag
-        //     ],
-        //     'on_cascade' => [],
-        //     'name' => null,
-        //     'type' => null, // eyvery type has to have a type ... else it would not work ...
-        //     'is_unique' => [ // NOT enum ...
-
-        //     ],
-
-        // ];
-        $allowed = [
-            // null means: all allowed
-            'lenght' => [
-                'text' => true,
-                'enum' => false,
-            ],
-
-            'is_primary' => [
-                'enum' => false,
-                'text' => true,
-                // 'uuid' => true, // isnt a real thing, is it? - laravel just made it easy ! ... ?
-                'lageText' => true,
-            ],
-
-            'on_cascade' => [],
-            'name' => null,
-            'type' => null, // eyvery type has to have a type ... else it would not work ...
-            
-            'is_unique' => [ // NOT enum ...
-                'text' => true,
-                'enum' => true,
-                'largeText' => true,
-                // 'uuid' => true, // not real ...
-            ],
-        ];
     }
 }

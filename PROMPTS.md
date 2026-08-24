@@ -208,4 +208,23 @@ I already wrote something in ToDos.md. Please read that and then create somethin
 Model: `Claude Sonnet 4.6 (Thinking)`
 PromptID: `15`
 
+
+[NEW SESSION]
+```
+I have this Laravel-application ("SchemaBuilder").
+I have the problem taht there are soem "invlaid staates" created (e.g. a largeText with a set lenght OR a nullabel primary key). I want to add "validation" in both Frontend AND backend.
+I already asked an LLM to give me advice on taht and i decided on Option A from llm_outpub/2026-08-23_20-17_column-validation-options.md.
+
+i already atarted updating teh SchemaColumn Model. Please continue and make it work in all places, it needs to.
+```
+Model: `Claude Sonnet 4.6 (Thinking)`
+PromptID: `16`
+
+```
+create a new file in llm_output/ and commit ALL CHNAGES to git
+```
+Model: `Claude Sonnet 4.6 (Thinking)`
+PromptID: `17`
+
+
 _**note:** PromptID is for reference from ROADMAP.md_

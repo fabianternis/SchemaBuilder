@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\ColumnTypeRules;
 use Illuminate\Database\Eloquent\{Concerns\HasUlids, Factories\HasFactory, Model, Relations\BelongsTo, SoftDeletes};
 
 class SchemaColumn extends Model
@@ -89,9 +90,18 @@ class SchemaColumn extends Model
         ],
     ];
 
-    public function can_be_nullable()
+    // -------------------------------------------------------------------------
+    // Model hooks: silently sanitise invalid states on every save
+    // -------------------------------------------------------------------------
+
+    protected static function booted(): void
     {
-        return $this->is_primary;
+        static::saving(function (SchemaColumn $col) {
+            $sanitised = ColumnTypeRules::sanitise($col->getAttributes());
+            foreach ($sanitised as $key => $value) {
+                $col->setAttribute($key, $value);
+            }
+        });
     }
 
     public function table(): BelongsTo

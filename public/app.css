@@ -689,6 +689,41 @@ input:checked + .toggle-slider::before { transform: translateX(15px); }
 .tc-title { font-size: 13px; font-weight: 500; }
 .tc-desc  { font-size: 11px; color: var(--text-muted); }
 
+/* Conflict state — mutually exclusive options (e.g. PK + nullable) */
+.toggle-card.conflict {
+    border-color: #e55;
+    background: color-mix(in srgb, #e55 8%, white);
+}
+.toggle-card.conflict .tc-title { color: #c33; }
+
+/* table.blade.php uses .toggle-row instead of .toggle-card */
+.toggle-row.conflict label:last-child { color: #c33; font-weight: 600; }
+.toggle-row.conflict input[type="checkbox"] + .toggle-slider { background: #e55; }
+
+/* Disabled/inapplicable option — greyed out, not interactive */
+.toggle-card.field-disabled {
+    opacity: 0.45;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+.exp-group.field-disabled,
+.toggle-row.field-disabled {
+    opacity: 0.45;
+    pointer-events: none;
+}
+.exp-group.field-disabled input,
+.toggle-row.field-disabled input {
+    cursor: not-allowed;
+}
+.form-group.field-disabled {
+    opacity: 0.45;
+    pointer-events: none;
+}
+.form-group.field-disabled input {
+    cursor: not-allowed;
+    background: var(--surface-2);
+}
+
 /* ============================================================
    LIST GROUP (project.blade / database.blade)
    ============================================================ */

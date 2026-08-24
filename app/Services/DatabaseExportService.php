@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\{SchemaDatabase as Database, SchemaTable as Table};
+use App\Support\ColumnTypeRules;
 use Illuminate\Support\Facades\Auth;
 
 class DatabaseExportService
@@ -100,7 +101,8 @@ class DatabaseExportService
         $foreign_keys = [];
         $primary_keys = [];
 
-        foreach ($columns as $column) {
+        foreach ($columns as $rawColumn) {
+            $column = (object) ColumnTypeRules::sanitise($rawColumn->getAttributes());
             $definition = "  `{$column->name}` " . strtoupper($column->type);
 
             if ($column->length) {
@@ -161,7 +163,8 @@ class DatabaseExportService
 
         $columns = $table->columns()->orderBy('order_index')->get();
 
-        foreach ($columns as $column) {
+        foreach ($columns as $rawColumn) {
+            $column = (object) ColumnTypeRules::sanitise($rawColumn->getAttributes());
             if ($column->name === 'id' && $column->is_primary && $column->auto_increment) {
                 $output_string .= "            \$table->id();\n";
                 continue;
@@ -243,29 +246,30 @@ class DatabaseExportService
 
     private function tableToArray(Table $table): array
     {
-        // ToDo: Add validation
         $columns = $table->columns()->orderBy('order_index')->get();
 
         return [
             'table'   => $table->name,
-            'columns' => $columns->map(fn ($c) => [
-                'name'                => $c->name,
-                'type'                => $c->type,
-                'length'              => $c->length,
-                'is_nullable'         => $c->is_nullable,
-                'is_primary'          => $c->is_primary,
-                'is_unique'           => $c->is_unique,
-                'auto_increment'      => $c->auto_increment,
-                'default'             => $c->default,
-                'on_cascade'          => $c->on_cascade,
-                'referenced_table_id' => $c->referenced_table_id,
-            ])->toArray(),
+            'columns' => $columns->map(function ($c) {
+                $s = ColumnTypeRules::sanitise($c->getAttributes());
+                return [
+                    'name'                => $s['name'],
+                    'type'                => $s['type'],
+                    'length'              => $s['length'],
+                    'is_nullable'         => $s['is_nullable'],
+                    'is_primary'          => $s['is_primary'],
+                    'is_unique'           => $s['is_unique'],
+                    'auto_increment'      => $s['auto_increment'],
+                    'default'             => $s['default'],
+                    'on_cascade'          => $s['on_cascade'],
+                    'referenced_table_id' => $s['referenced_table_id'],
+                ];
+            })->toArray(),
         ];
     }
 
     private function exportDatabaseJson(Database $database, $tables): string
     {
-        // ToDo: DEFINITELY add validation ...
         $schema = [
             'database' => $database->name,
             'tables'   => $tables->map(fn ($t) => $this->tableToArray($t))->values()->toArray(),
@@ -280,14 +284,13 @@ class DatabaseExportService
 
     private function exportTableCsv(Table $table): string
     {
-        // ToDo: add validation
-
         $rows    = [];
         $rows[]  = ['table', 'column', 'type', 'length', 'nullable', 'primary', 'unique', 'auto_increment', 'default', 'on_cascade', 'references_table'];
 
         $columns = $table->columns()->orderBy('order_index')->get();
 
-        foreach ($columns as $column) {
+        foreach ($columns as $rawColumn) {
+            $column          = (object) ColumnTypeRules::sanitise($rawColumn->getAttributes());
             $referencedTable = $column->referenced_table_id ? Table::find($column->referenced_table_id)?->name : '';
             $rows[] = [
                 $table->name,
@@ -301,7 +304,6 @@ class DatabaseExportService
                 $column->default ?? '',
                 $column->on_cascade ?? '',
                 $referencedTable ?? '',
-                
             ];
         }
 
@@ -310,21 +312,20 @@ class DatabaseExportService
 
     private function exportDatabaseCsv(Database $database, $tables): string
     {
-        // ToDo: add "validation"
-
         $rows   = [];
         $rows[] = ['table', 'column', 'type', 'length', 'nullable', 'primary', 'unique', 'auto_increment', 'default', 'on_cascade', 'references_table'];
 
         foreach ($tables as $table) {
             $columns = $table->columns()->orderBy('order_index')->get();
-            foreach ($columns as $column) {
+            foreach ($columns as $rawColumn) {
+                $column          = (object) ColumnTypeRules::sanitise($rawColumn->getAttributes());
                 $referencedTable = $column->referenced_table_id ? Table::find($column->referenced_table_id)?->name : '';
                 $rows[] = [
                     $table->name,
                     $column->name,
                     $column->type,
                     $column->length ?? '',
-                    $column->is_nullable ?'YES' : 'NO',
+                    $column->is_nullable ? 'YES' : 'NO',
                     $column->is_primary ? 'YES' : 'NO',
                     $column->is_unique  ? 'YES' : 'NO',
                     $column->auto_increment ? 'YES' : 'NO',
