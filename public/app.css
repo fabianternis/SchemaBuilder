@@ -108,6 +108,9 @@ svg.empty-icon-svg      { width: 36px; height: 36px; transform: none; color: var
 svg.dialog-title-icon   { width: 16px; height: 16px; transform: none; }
 svg.detail-link-icon    { width: 12px; height: 12px; transform: none; }
 svg.toast-icon          { width: 16px; height: 16px; transform: none; flex-shrink: 0; }
+svg.dashboard-project-icon { width: 16px; height: 16px; transform: none; color: var(--text-secondary); }
+svg.database-card-icon    { width: 15px; height: 15px; transform: none; color: var(--text-muted); }
+svg.database-card-arrow   { width: 13px; height: 13px; transform: none; color: var(--text-muted); }
 
 /* ============================================================
    NAV / BREADCRUMB
@@ -1434,5 +1437,164 @@ svg.import-chosen-icon {
         width: 100%;
         justify-content: center;
         text-align: center;
+    }
+}
+
+/* ============================================================
+   DASHBOARD PROJECTS SECTION
+   ============================================================ */
+.dashboard-projects-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.dashboard-projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.dashboard-project-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    &:not(:last-child) {
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+    }
+}
+
+.dashboard-project-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.dashboard-project-title-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    .project-name {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+        text-decoration: none;
+        transition: color var(--transition);
+
+        &:hover {
+            color: var(--accent);
+
+            svg.dashboard-project-icon {
+                color: var(--accent);
+            }
+        }
+    }
+}
+
+.dashboard-badge {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 1px 7px;
+    border-radius: 99px;
+    white-space: nowrap;
+}
+
+.dashboard-project-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dashboard-project-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-top: -4px;
+}
+
+.dashboard-project-databases-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+    list-style: none;
+}
+
+.dashboard-project-database-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: var(--transition);
+
+    .database-name {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &:hover {
+        background: var(--surface);
+        border-color: var(--accent);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, .04);
+        color: var(--text);
+
+        svg.database-card-icon {
+            color: var(--accent);
+        }
+
+        svg.database-card-arrow {
+            color: var(--accent);
+            transform: translateX(2px);
+        }
+    }
+}
+
+.dashboard-databases-empty {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--surface-2);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    color: var(--text-muted);
+    font-size: 12px;
+    flex-wrap: wrap;
+}
+
+.dashboard-databases-empty-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color var(--transition);
+
+    &:hover {
+        color: var(--accent-hover);
+        text-decoration: underline;
     }
 }

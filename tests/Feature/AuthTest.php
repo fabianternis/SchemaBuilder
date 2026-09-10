@@ -126,11 +126,67 @@ it('shows dashboard for authenticated user', function () {
     $response->assertStatus(200);
 });
 
+it('displays empty state on dashboard when user has no projects', function () {
+    loginUser();
+    $response = $this->get(route('pages.dashboard'));
+    $response->assertStatus(200);
+    $response->assertSee('Seems like you have no projects yet.');
+    $response->assertSee(route('projects.create'));
+});
+
+it('displays projects and databases on dashboard', function () {
+    $user = loginUser();
+
+    $project = \App\Models\Project::create([
+        'owner_id' => $user->id,
+        'owner_type' => $user->getMorphClass(),
+        'name' => 'Alpha Project',
+        'slug' => 'alpha-project',
+        'description' => 'First test project',
+    ]);
+
+    $database = \App\Models\SchemaDatabase::create([
+        'project_id' => $project->id,
+        'name' => 'alpha_db',
+    ]);
+
+    $response = $this->get(route('pages.dashboard'));
+
+    $response->assertStatus(200);
+    $response->assertSee('Alpha Project');
+    $response->assertSee('First test project');
+    $response->assertSee('alpha_db');
+    $response->assertSee('1 database');
+    $response->assertSee(route('schema.project', $project));
+    $response->assertSee(route('schema.database', ['project' => $project->slug, 'database' => $database->name]));
+    $response->assertSee(route('new', $project->slug));
+});
+
+it('displays empty database notice when project has no databases', function () {
+    $user = loginUser();
+
+    $project = \App\Models\Project::create([
+        'owner_id' => $user->id,
+        'owner_type' => $user->getMorphClass(),
+        'name' => 'Empty DB Project',
+        'slug' => 'empty-db-project',
+    ]);
+
+    $response = $this->get(route('pages.dashboard'));
+
+    $response->assertStatus(200);
+    $response->assertSee('Empty DB Project');
+    $response->assertSee('0 databases');
+    $response->assertSee('No databases in this project yet.');
+    $response->assertSee(route('new', $project->slug));
+});
+
 it('redirects guests from dashboard', function () {
     $response = $this->get(route('pages.dashboard'));
     // Auth middleware redirects to the named route 'login' (which is /auth)
     $response->assertRedirect();
 });
+
 
 it('shows home page for guests', function () {
     $response = $this->get(route('pages.home'));

@@ -233,5 +233,12 @@ make it, so the "ENABLE_OAUTH"-variable n .env is functional (should default to 
 Model: `Gemini 3.8 Flash (Medium)`
 PromptID: `18`
 
+[NEW SESSION]
+```
+review the projects-section on pages.dashboard view. Please add css for it and chaneg the html a little bit. Keep teh same design-concept as tehre is already existant on app.css
+```
+Model: `Gemini 3.8 Flash (High)`
+PromptID: `19`
+
 
 _**note:** PromptID is for reference from [ROADMAP.md](ROADMAP.md)_

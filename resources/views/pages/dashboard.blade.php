@@ -43,27 +43,75 @@
         </div>
     </div>
 
-    <div class="section-card">
-        @forelse($projects as $project)
-            <div class="dashboard-project-item">
-                <span class="project-name">{{ $project->name }}</span>
-                <ul class="dashboard-project-databases-list">
-                    <!-- should be a "grid" of databases ... (or just flexbox) -->
-                    @forelse($project->databases as $database)
-                        <li class="dashboard-project-database-item">
-                            <span class="database-name">{{ $database->name }}</span>
-                        </li>
-                    @empty
-                        <div>No Databases for this Project ({{ $project->name }})</div>
-                    @endforelse
-                </ul>
+    {{-- Projects Section --}}
+    <div class="section-card dashboard-projects-section">
+        <div class="section-title-flex section-title">
+            <span>Projects</span>
+            @if($projects->isNotEmpty())
+                <a href="{{ route('projects.create') }}" class="btn-secondary btn-secondary-sm">
+                    <x-heroicon-o-plus class="btn-icon-svg" /> New Project
+                </a>
+            @endif
+        </div>
+
+        @if($projects->isNotEmpty())
+            <div class="dashboard-projects-list">
+                @foreach($projects as $project)
+                    <div class="dashboard-project-item">
+                        <div class="dashboard-project-header">
+                            <div class="dashboard-project-title-group">
+                                <a href="{{ route('schema.project', $project) }}" class="project-name">
+                                    <x-heroicon-o-folder class="dashboard-project-icon" />
+                                    <span>{{ $project->name }}</span>
+                                </a>
+                                <span class="dashboard-badge">
+                                    {{ $project->databases->count() }} {{ Str::plural('database', $project->databases->count()) }}
+                                </span>
+                            </div>
+                            <div class="dashboard-project-actions">
+                                <a href="{{ route('new', $project->slug) }}" class="btn-secondary btn-secondary-sm" title="Add Database">
+                                    <x-heroicon-o-plus class="btn-icon-svg" /> Add Database
+                                </a>
+                                <a href="{{ route('schema.project', $project) }}" class="btn-icon" title="View Project">
+                                    <x-heroicon-o-arrow-right class="btn-icon-svg" />
+                                </a>
+                            </div>
+                        </div>
+
+                        @if($project->description)
+                            <p class="dashboard-project-desc">{{ $project->description }}</p>
+                        @endif
+
+                        <div class="dashboard-project-databases-list">
+                            @forelse($project->databases as $database)
+                                <a href="{{ route('schema.database', ['project' => $project->slug, 'database' => $database->name]) }}" class="dashboard-project-database-item">
+                                    <x-heroicon-o-circle-stack class="database-card-icon" />
+                                    <span class="database-name mono">{{ $database->name }}</span>
+                                    <x-heroicon-o-chevron-right class="database-card-arrow" />
+                                </a>
+                            @empty
+                                <div class="dashboard-databases-empty">
+                                    <span>No databases in this project yet.</span>
+                                    <a href="{{ route('new', $project->slug) }}" class="dashboard-databases-empty-link">
+                                        <x-heroicon-o-plus class="btn-icon-svg" /> Create one
+                                    </a>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                @endforeach
             </div>
-        @empty
-            Seems like you have no Projects yet.
-            <a href="{{ route('projects.create') }}" class="btn-secondary">
-                <x-heroicon-o-folder class="btn-icon-svg" /> Create one
-            </a>
-        @endforelse
+        @else
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <x-heroicon-o-folder class="empty-icon-svg" />
+                </div>
+                <p>Seems like you have no projects yet.</p>
+                <a href="{{ route('projects.create') }}" class="btn-primary">
+                    <x-heroicon-o-plus class="btn-icon-svg" /> Create one
+                </a>
+            </div>
+        @endif
     </div>
 </div>
 @endsection
