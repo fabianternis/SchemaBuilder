@@ -165,7 +165,6 @@ I have Resource template-views (e.g. used in ProjectCOntroller). now: please upd
 Model: ``
 PromptID: `` --> 
 
-
 ### 2026-07-18
 
 [NEW SESSION]
@@ -227,4 +226,4 @@ Model: `Claude Sonnet 4.6 (Thinking)`
 PromptID: `17`
 
 
-_**note:** PromptID is for reference from ROADMAP.md_
+_**note:** PromptID is for reference from [ROADMAP.md](ROADMAP.md)_
