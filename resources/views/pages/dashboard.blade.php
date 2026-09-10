@@ -42,5 +42,28 @@
             </a>
         </div>
     </div>
+
+    <div class="section-card">
+        @forelse($projects as $project)
+            <div class="dashboard-project-item">
+                <span class="project-name">{{ $project->name }}</span>
+                <ul class="dashboard-project-databases-list">
+                    <!-- should be a "grid" of databases ... (or just flexbox) -->
+                    @forelse($project->databases as $database)
+                        <li class="dashboard-project-database-item">
+                            <span class="database-name">{{ $database->name }}</span>
+                        </li>
+                    @empty
+                        <div>No Databases for this Project ({{ $project->name }})</div>
+                    @endforelse
+                </ul>
+            </div>
+        @empty
+            Seems like you have no Projects yet.
+            <a href="{{ route('projects.create') }}" class="btn-secondary">
+                <x-heroicon-o-folder class="btn-icon-svg" /> Create one
+            </a>
+        @endforelse
+    </div>
 </div>
 @endsection
