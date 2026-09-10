@@ -114,4 +114,16 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | OAuth Authentication
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, third-party OAuth providers (e.g. GitHub, HackClub) are
+    | active and available on the login/signup interfaces.
+    |
+    */
+
+    'oauth_enabled' => filter_var(env('ENABLE_OAUTH', false), FILTER_VALIDATE_BOOLEAN),
+
 ];

@@ -136,3 +136,64 @@ it('shows home page for guests', function () {
     $response = $this->get(route('pages.home'));
     $response->assertStatus(200);
 });
+
+// ---------------------------------------------------------------------------
+// Authentication — OAuth (ENABLE_OAUTH)
+// ---------------------------------------------------------------------------
+
+it('does not display OAuth buttons when ENABLE_OAUTH is false', function () {
+    config(['services.oauth.enabled' => false]);
+
+    $loginResponse = $this->get(route('auth.login'));
+    $loginResponse->assertStatus(200);
+    $loginResponse->assertDontSee('with GitHub');
+    $loginResponse->assertDontSee('with HackClub');
+
+    $signupResponse = $this->get(route('auth.signup'));
+    $signupResponse->assertStatus(200);
+    $signupResponse->assertDontSee('with GitHub');
+    $signupResponse->assertDontSee('with HackClub');
+});
+
+it('returns 404 on OAuth routes when ENABLE_OAUTH is false', function () {
+    config(['services.oauth.enabled' => false]);
+
+    $this->get(route('auth.github'))->assertStatus(404);
+    $this->get(route('auth.github.callback'))->assertStatus(404);
+    $this->get(route('auth.hackclub'))->assertStatus(404);
+    $this->get(route('auth.hackclub.callback'))->assertStatus(404);
+});
+
+it('displays OAuth buttons on login and signup when ENABLE_OAUTH is true', function () {
+    config(['services.oauth.enabled' => true]);
+
+    $loginResponse = $this->get(route('auth.login'));
+    $loginResponse->assertStatus(200);
+    $loginResponse->assertSee('with GitHub');
+    $loginResponse->assertSee('with HackClub');
+
+    $signupResponse = $this->get(route('auth.signup'));
+    $signupResponse->assertStatus(200);
+    $signupResponse->assertSee('with GitHub');
+    $signupResponse->assertSee('with HackClub');
+});
+
+it('initiates OAuth redirect when ENABLE_OAUTH is true', function () {
+    config([
+        'services.oauth.enabled' => true,
+        'services.github.client_id' => 'test-github-id',
+        'services.github.client_secret' => 'test-github-secret',
+        'services.github.redirect' => 'http://localhost/auth/github/callback',
+        'services.hackclub.client_id' => 'test-hackclub-id',
+        'services.hackclub.client_secret' => 'test-hackclub-secret',
+        'services.hackclub.redirect' => 'http://localhost/auth/hackclub/callback',
+    ]);
+
+    $githubResponse = $this->get(route('auth.github'));
+    $githubResponse->assertRedirect();
+    expect($githubResponse->headers->get('Location'))->toContain('github.com/login/oauth/authorize');
+
+    $hackclubResponse = $this->get(route('auth.hackclub'));
+    $hackclubResponse->assertRedirect();
+    expect($hackclubResponse->headers->get('Location'))->toContain('auth.hackclub.com/oauth/authorize');
+});

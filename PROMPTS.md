@@ -226,4 +226,12 @@ Model: `Claude Sonnet 4.6 (Thinking)`
 PromptID: `17`
 
 
+[NEW SESSION]
+```
+make it, so the "ENABLE_OAUTH"-variable n .env is functional (should default to false) ... ; update auth-views and co. ...
+```
+Model: `Gemini 3.8 Flash (Medium)`
+PromptID: `18`
+
+
 _**note:** PromptID is for reference from [ROADMAP.md](ROADMAP.md)_

@@ -81,6 +81,8 @@ class AuthController extends Controller
      */
     public function redirectToGitHub(): RedirectResponse
     {
+        $this->ensureOAuthEnabled();
+
         return Socialite::driver('github')->redirect();
     }
 
@@ -94,6 +96,8 @@ class AuthController extends Controller
      */
     public function handleGitHubCallback(Request $request): RedirectResponse
     {
+        $this->ensureOAuthEnabled();
+
         if ($request->has('error')) {
             return redirect()->route('auth.login')
                 ->withErrors(['oauth' => 'GitHub authorization was denied or cancelled.']);
@@ -142,6 +146,8 @@ class AuthController extends Controller
      */
     public function redirectToHackClub(): RedirectResponse
     {
+        $this->ensureOAuthEnabled();
+
         return Socialite::driver('hackclub')->redirect();
     }
 
@@ -155,6 +161,8 @@ class AuthController extends Controller
      */
     public function handleHackClubCallback(Request $request): RedirectResponse
     {
+        $this->ensureOAuthEnabled();
+
         if ($request->has('error')) {
             return redirect()->route('auth.login')
                 ->withErrors(['oauth' => 'HackClub authorization was denied or cancelled.']);
@@ -191,9 +199,15 @@ class AuthController extends Controller
         return redirect()->route('root');
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Helpers
-    // ──────────────────────────────────────────────────────────────────────────
+    /**
+     * Abort with 404 if OAuth is disabled.
+     */
+    protected function ensureOAuthEnabled(): void
+    {
+        if (!config('services.oauth.enabled', false)) {
+            abort(404);
+        }
+    }
 
     /**
      * Derive a unique username from an OAuth display name / nickname.

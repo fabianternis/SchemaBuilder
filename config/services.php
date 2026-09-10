@@ -37,6 +37,10 @@ return [
 
     // ── OAuth providers ───────────────────────────────────────────────────────
 
+    'oauth' => [
+        'enabled' => filter_var(env('ENABLE_OAUTH', false), FILTER_VALIDATE_BOOLEAN),
+    ],
+
     'github' => [
         'client_id'     => env('GITHUB_CLIENT_ID'),
         'client_secret' => env('GITHUB_CLIENT_SECRET'),
