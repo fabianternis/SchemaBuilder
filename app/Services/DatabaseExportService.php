@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\{SchemaDatabase as Database, SchemaTable as Table};
+use App\Support\ColumnTypeRules;
 use Illuminate\Support\Facades\Auth;
 
 class DatabaseExportService
@@ -21,7 +22,7 @@ class DatabaseExportService
     // Database-level helpers
     // -------------------------------------------------------------------------
 
-    public function exportDatabase(Database $database, string $to): string
+    public function exportDatabase(Database $database, string $to, bool $allow_empty_tables): string
     {
         $project = $database->project;
 
@@ -43,7 +44,7 @@ class DatabaseExportService
 
         $output_data = '';
         foreach ($tables as $table) {
-            $output_data .= $this->exportTable($table, $to) . "\n\n";
+            $output_data .= $this->exportTable($table, $to, $allow_empty_tables) . "\n\n";
         }
 
         return $output_data;
@@ -63,11 +64,16 @@ class DatabaseExportService
     // Table-level export (SQL / Laravel)
     // -------------------------------------------------------------------------
 
-    public function exportTable(Table $table, string $to): string
+    public function exportTable(Table $table, string $to, bool $allow_empty = false): string
     {
         $output_string = '';
 
-        if ((!isset($to)) || (strtolower($to) === 'sql')) {
+        if (($table->columns->count() < 2) && !$allow_empty) {
+            // just remembered i could have implemented this at the exportDatabase()-level ...
+            // should minimum be 1 or 2 ?
+            $output_string .= ''; // Whated to make a "code comment" but am too lazy to make the comment function with every export-method ...
+            $user_message = 'Some Table(s) have not enough columns to be ready to be exported';
+        } elseif ((!isset($to)) || (strtolower($to) === 'sql')) {
             $output_string = $this->exportTableSql($table);
 
         } elseif (strtolower($to) === 'laravel') {
@@ -100,7 +106,8 @@ class DatabaseExportService
         $foreign_keys = [];
         $primary_keys = [];
 
-        foreach ($columns as $column) {
+        foreach ($columns as $rawColumn) {
+            $column = (object) ColumnTypeRules::sanitise($rawColumn->getAttributes());
             $definition = "  `{$column->name}` " . strtoupper($column->type);
 
             if ($column->length) {
@@ -161,7 +168,8 @@ class DatabaseExportService
 
         $columns = $table->columns()->orderBy('order_index')->get();
 
-        foreach ($columns as $column) {
+        foreach ($columns as $rawColumn) {
+            $column = (object) ColumnTypeRules::sanitise($rawColumn->getAttributes());
             if ($column->name === 'id' && $column->is_primary && $column->auto_increment) {
                 $output_string .= "            \$table->id();\n";
                 continue;
@@ -203,16 +211,16 @@ class DatabaseExportService
 
             $def = "            \$table->{$method}({$args})";
 
-            if ($column->auto_increment)  { $def .= "->autoIncrement()"; }
-            if ($column->is_nullable)     { $def .= "->nullable()"; }
+            if ($column->auto_increment && false)  { $def .= "->autoIncrement()"; }
+            if ($column->is_nullable && false)     { $def .= "->nullable()"; }
 
             if ($column->default !== null) {
                 $defaultValue = is_numeric($column->default) ? $column->default : "'{$column->default}'";
                 $def .= "->default({$defaultValue})";
             }
 
-            if ($column->is_unique)  { $def .= "->unique()"; }
-            if ($column->is_primary) { $def .= "->primary()"; }
+            if ($column->is_unique && false)  { $def .= "->unique()"; }
+            if ($column->is_primary && false) { $def .= "->primary()"; }
 
             $output_string .= $def . ";\n";
         }
@@ -247,18 +255,21 @@ class DatabaseExportService
 
         return [
             'table'   => $table->name,
-            'columns' => $columns->map(fn ($c) => [
-                'name'                => $c->name,
-                'type'                => $c->type,
-                'length'              => $c->length,
-                'is_nullable'         => $c->is_nullable,
-                'is_primary'          => $c->is_primary,
-                'is_unique'           => $c->is_unique,
-                'auto_increment'      => $c->auto_increment,
-                'default'             => $c->default,
-                'on_cascade'          => $c->on_cascade,
-                'referenced_table_id' => $c->referenced_table_id,
-            ])->toArray(),
+            'columns' => $columns->map(function ($c) {
+                $s = ColumnTypeRules::sanitise($c->getAttributes());
+                return [
+                    'name'                => $s['name'],
+                    'type'                => $s['type'],
+                    'length'              => $s['length'],
+                    'is_nullable'         => $s['is_nullable'],
+                    'is_primary'          => $s['is_primary'],
+                    'is_unique'           => $s['is_unique'],
+                    'auto_increment'      => $s['auto_increment'],
+                    'default'             => $s['default'],
+                    'on_cascade'          => $s['on_cascade'],
+                    'referenced_table_id' => $s['referenced_table_id'],
+                ];
+            })->toArray(),
         ];
     }
 
@@ -283,7 +294,8 @@ class DatabaseExportService
 
         $columns = $table->columns()->orderBy('order_index')->get();
 
-        foreach ($columns as $column) {
+        foreach ($columns as $rawColumn) {
+            $column          = (object) ColumnTypeRules::sanitise($rawColumn->getAttributes());
             $referencedTable = $column->referenced_table_id ? Table::find($column->referenced_table_id)?->name : '';
             $rows[] = [
                 $table->name,
@@ -310,7 +322,8 @@ class DatabaseExportService
 
         foreach ($tables as $table) {
             $columns = $table->columns()->orderBy('order_index')->get();
-            foreach ($columns as $column) {
+            foreach ($columns as $rawColumn) {
+                $column          = (object) ColumnTypeRules::sanitise($rawColumn->getAttributes());
                 $referencedTable = $column->referenced_table_id ? Table::find($column->referenced_table_id)?->name : '';
                 $rows[] = [
                     $table->name,

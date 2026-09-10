@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\{Concerns\HasUlids, Factories\HasFactory};
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['username', 'email', 'password', 'github_id', 'github_token', 'github_refresh_token'])]
-#[Hidden(['password', 'remember_token', 'github_token', 'github_refresh_token'])]
+#[Fillable(['username', 'email', 'password', 'github_id', 'github_token', 'github_refresh_token', 'hackclub_id', 'hackclub_token'])]
+#[Hidden(['password', 'remember_token', 'github_token', 'github_refresh_token', 'hackclub_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */

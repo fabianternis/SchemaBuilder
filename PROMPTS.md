@@ -165,4 +165,80 @@ I have Resource template-views (e.g. used in ProjectCOntroller). now: please upd
 Model: ``
 PromptID: `` --> 
 
+### 2026-07-18
+
+[NEW SESSION]
+```
+This is a LaravelPHP-based Web-APplication called SchemaBuilder.
+
+I am in a "finished" state, i think. 
+YOur Task as a Senior Laravel Export is to review teh entire application, perform fixes and write a review to llm_output/{formatted_as_the_other_files}.md.
+
+also write a review to the same output-dir.
+```
+Model: `Claude Sonnet 4.6 (Thinking)`
+PromptID: `13`
+<hr>
+
+
+
+[NEW SESSION]
+```
+This is a LaravelPHP-based Web-APplication called SchemaBuilder.
+
+Please Add new auth-routes and update the AuthController by adding OAuth for both GitHub and HackClub.
+
+Thanks!
+
+if you have any additional, important output: llm_output/{formatted_as_the_other_files}.md.
+```
+Model: `Claude Sonnet 4.6 (Thinking)`
+PromptID: `14`
+<hr>
+
+
+
+[NEW SESSION]
+```
+I have this Laravel-application ("SchemaBuilder").
+I have the problem taht there are soem "invlaid staates" created (e.g. a largeText with a set lenght OR a nullabel primary key). I want to add "validation" in both Frontend AND backend.
+I already wrote something in ToDos.md. Please read that and then create something in llm_output/ (filename format like teh otehr files) that tells me what are possible implementation-options and best-practices and co.
+```
+Model: `Claude Sonnet 4.6 (Thinking)`
+PromptID: `15`
+
+
+[NEW SESSION]
+```
+I have this Laravel-application ("SchemaBuilder").
+I have the problem taht there are soem "invlaid staates" created (e.g. a largeText with a set lenght OR a nullabel primary key). I want to add "validation" in both Frontend AND backend.
+I already asked an LLM to give me advice on taht and i decided on Option A from llm_outpub/2026-08-23_20-17_column-validation-options.md.
+
+i already atarted updating teh SchemaColumn Model. Please continue and make it work in all places, it needs to.
+```
+Model: `Claude Sonnet 4.6 (Thinking)`
+PromptID: `16`
+
+```
+create a new file in llm_output/ and commit ALL CHNAGES to git
+```
+Model: `Claude Sonnet 4.6 (Thinking)`
+PromptID: `17`
+
+
+[NEW SESSION]
+```
+make it, so the "ENABLE_OAUTH"-variable n .env is functional (should default to false) ... ; update auth-views and co. ...
+```
+Model: `Gemini 3.8 Flash (Medium)`
+PromptID: `18`
+
+[NEW SESSION]
+```
+review the projects-section on pages.dashboard view. Please add css for it and chaneg the html a little bit. Keep teh same design-concept as tehre is already existant on app.css
+```
+Model: `Gemini 3.8 Flash (High)`
+PromptID: `19`
+
+
 _**note:** PromptID is for reference from [ROADMAP.md](ROADMAP.md)_

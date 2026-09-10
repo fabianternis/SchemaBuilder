@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\{Project, SchemaDatabase as Database, SchemaTable as Table, SchemaColumn as Column};
 use Illuminate\Support\{Str, Facades\Auth};
 use App\Services\{DatabaseExportService, DatabaseImportService};
+use App\Http\Requests\UpdateColumnRequest;
+use App\Support\ColumnTypeRules;
 
 class SchemaController extends Controller
 {
@@ -129,7 +131,7 @@ class SchemaController extends Controller
 
         $savedColumns = [];
         foreach ($validated['columns'] as $index => $colData) {
-            $attrs = [
+            $attrs = ColumnTypeRules::sanitise([
                 'table_id'            => $table->id,
                 'name'                => $colData['name'],
                 'type'                => $colData['type'],
@@ -142,7 +144,7 @@ class SchemaController extends Controller
                 'on_cascade'          => $colData['on_cascade']       ?? null,
                 'referenced_table_id' => $colData['referenced_table_id'] ?? null,
                 'order_index'         => $index,
-            ];
+            ]);
 
             if (!empty($colData['id'])) {
                 $col = Column::where('id', $colData['id'])->where('table_id', $table->id)->first();
@@ -170,27 +172,14 @@ class SchemaController extends Controller
     // -------------------------------------------------------------------------
     // JSON API: update a single column
     // -------------------------------------------------------------------------
-    public function updateColumn(Request $request, Project $project, Database $database, Table $table, Column $column)
+    public function updateColumn(UpdateColumnRequest $request, Project $project, Database $database, Table $table, Column $column)
     {
         abort_if($project->owner_id !== auth()->id(), 403);
         abort_if($database->project_id !== $project->id, 404);
         abort_if($table->database_id !== $database->id, 404);
         abort_if($column->table_id !== $table->id, 404);
 
-        $validated = $request->validate([
-            'name'                => ['required', 'string', 'max:255'],
-            'type'                => ['required', 'string', 'max:100'],
-            'is_nullable'         => ['boolean'],
-            'is_primary'          => ['boolean'],
-            'is_unique'           => ['boolean'],
-            'auto_increment'      => ['boolean'],
-            'default'             => ['nullable', 'string', 'max:255'],
-            'length'              => ['nullable', 'integer', 'min:1'],
-            'on_cascade'          => ['nullable', 'string', 'max:50'],
-            'referenced_table_id' => ['nullable', 'string'],
-        ]);
-
-        $column->update($validated);
+        $column->update($request->validated());
         $column->load('referencedTable');
 
         return response()->json([
@@ -283,20 +272,22 @@ class SchemaController extends Controller
         abort_if($database->project_id !== $project->id, 404);
 
         $to = strtolower($request->route('to') ?? $request->query('to', 'sql'));
-
+        // $_allow_empty_tables = (strtolower($request->route('allow_empty_tables') ?? $request->query('allow_empty_tables', 'false')));
+        // $allow_empty_tables = filter_var($_allow_empty_tables, FILTER_VALIDATE_BOOLEAN);
+        $allow_empty_tables = $request->boolean('allow_empty_tables');
+        
         $validTargets = array_keys(DatabaseExportService::$targets);
         if (!in_array($to, $validTargets, true)) {
             abort(404, "Unknown export format: {$to}");
         }
 
-        $output   = $exportService->exportDatabase($database, $to);
+        $output   = $exportService->exportDatabase($database, $to, $allow_empty_tables);
         $mime     = $exportService->getMimeType($to);
         $ext      = $exportService->getExtension($to);
-        $filename = "{$database->name}_schema.{$ext}";
+        $empty_stuff = $allow_empty_tables ? '' : '_no_empty_tables';
+        $filename = "{$database->name}_schema{$empty_stuff}.{$ext}";
 
-        return response($output, 200)
-            ->header('Content-Type', $mime)
-            ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
+        return response($output, 200)->header('Content-Type', $mime)->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
     }
 
     // -------------------------------------------------------------------------
@@ -331,8 +322,6 @@ class SchemaController extends Controller
             $msg .= ' Warnings: ' . implode(' | ', $stats['warnings']);
         }
 
-        return redirect()
-            ->route('schema.database', ['project' => $project->slug, 'database' => $database->name])
-            ->with('import_success', $msg);
+        return redirect()->route('schema.database', ['project' => $project->slug, 'database' => $database->name])->with('import_success', $msg);
     }
 }

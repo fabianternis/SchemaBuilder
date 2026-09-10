@@ -272,6 +272,75 @@ toggleCards.forEach(card => {
 });
 
 // ============================================================
+//  COLUMN TYPE RULES  (PHP is the single source of truth)
+// ============================================================
+const COLUMN_TYPE_RULES = @json(\App\Support\ColumnTypeRules::asJson());
+
+/** Returns true when `option` is allowed for `type`. */
+function typeAllows(type, option) {
+    const allowed = COLUMN_TYPE_RULES[option];
+    if (allowed === null || allowed === undefined) return true;
+    return allowed.map(t => t.toLowerCase()).includes(type.toLowerCase());
+}
+
+/**
+ * Disable / grey-out controls that don't apply for the current type,
+ * and clear their values so they don't get sent to the server.
+ */
+function applyTypeConstraints(type) {
+    const lengthAllowed = typeAllows(type, 'length');
+    const aiAllowed     = typeAllows(type, 'auto_increment');
+
+    // Length field
+    colLength.disabled = !lengthAllowed;
+    colLength.closest('.form-group').classList.toggle('field-disabled', !lengthAllowed);
+    if (!lengthAllowed) {
+        colLength.value = '';
+        state.length = null;
+    }
+
+    // Auto-increment toggle card
+    const aiCard = toggleAI.closest('.toggle-card');
+    toggleAI.disabled = !aiAllowed;
+    aiCard.classList.toggle('field-disabled', !aiAllowed);
+    if (!aiAllowed && toggleAI.checked) {
+        toggleAI.checked = false;
+        aiCard.classList.remove('active');
+        state.auto_increment = false;
+    }
+}
+
+/** Real-time conflict highlights between mutually-exclusive toggles. */
+function updateConflictHighlights() {
+    const pkNullConflict = togglePrim.checked && toggleNull.checked;
+    const aiNullConflict = toggleAI.checked   && toggleNull.checked;
+    const pkUqConflict   = togglePrim.checked && toggleUniq.checked;
+
+    toggleNull.closest('.toggle-card').classList.toggle('conflict', pkNullConflict || aiNullConflict);
+    togglePrim.closest('.toggle-card').classList.toggle('conflict', pkNullConflict || pkUqConflict);
+    toggleAI.closest('.toggle-card').classList.toggle('conflict',   aiNullConflict);
+    toggleUniq.closest('.toggle-card').classList.toggle('conflict',  pkUqConflict);
+}
+
+/** Pre-save validation — returns array of human-readable error strings. */
+function validateState(s) {
+    const errors = [];
+    if (!s.name?.trim())
+        errors.push('Column name is required.');
+    if (s.is_primary && s.is_nullable)
+        errors.push('A primary key column cannot be nullable.');
+    if (s.auto_increment && s.is_nullable)
+        errors.push('AUTO_INCREMENT columns cannot be nullable.');
+    if (s.is_primary && s.is_unique)
+        errors.push('"Unique" is redundant on a primary key — consider removing it.');
+    if (s.length && !typeAllows(s.type, 'length'))
+        errors.push(`Length is not supported for type "${s.type}".`);
+    if (s.auto_increment && !typeAllows(s.type, 'auto_increment'))
+        errors.push(`Auto-increment is not supported for type "${s.type}".`);
+    return errors;
+}
+
+// ============================================================
 //  READ STATE FROM DOM
 // ============================================================
 function readState() {
@@ -315,7 +384,15 @@ function toast(msg, type = 'info') {
 let saveInProgress = false;
 async function saveColumn() {
     if (saveInProgress) return;
-    if (!state.name.trim()) { toast('Column name is required.', 'error'); return; }
+
+    readState();
+
+    // Frontend validation before hitting the server
+    const errors = validateState(state);
+    if (errors.length) {
+        errors.forEach(e => toast(e, 'error'));
+        return;
+    }
 
     saveInProgress = true;
     btnSave.disabled = true;
@@ -388,6 +465,8 @@ function scheduleAutosave() {
 // ============================================================
 function onChange() {
     readState();
+    applyTypeConstraints(state.type);
+    updateConflictHighlights();
     if (JSON.stringify(state) !== lastSavedJson) {
         setStatus('pending', 'Unsaved changes');
         scheduleAutosave();
@@ -467,7 +546,11 @@ document.addEventListener('keydown', e => {
     }
 });
 
-// Init
+// ============================================================
+//  INIT
+// ============================================================
 setStatus('saved', 'Saved');
+applyTypeConstraints(state.type);
+updateConflictHighlights();
 </script>
 @endsection

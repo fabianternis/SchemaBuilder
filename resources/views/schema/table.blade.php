@@ -202,6 +202,80 @@ const COLUMN_TYPES = [
     'uuid','ulid','year'
 ];
 
+// ============================================================
+//  COLUMN TYPE RULES  (PHP is the single source of truth)
+// ============================================================
+const COLUMN_TYPE_RULES = @json(\App\Support\ColumnTypeRules::asJson());
+
+/** Returns true when `option` is allowed for `type`. */
+function typeAllows(type, option) {
+    const allowed = COLUMN_TYPE_RULES[option];
+    if (allowed === null || allowed === undefined) return true;
+    return allowed.map(t => t.toLowerCase()).includes(type.toLowerCase());
+}
+
+/**
+ * Disable / grey-out row controls that don't apply for the current type.
+ * Clears illegal values so they don't get submitted.
+ */
+function applyRowTypeConstraints(row, colObj) {
+    const type         = colObj.type || 'string';
+    const lengthAllowed = typeAllows(type, 'length');
+    const aiAllowed     = typeAllows(type, 'auto_increment');
+
+    const lenInput = row.querySelector('.col-input-length');
+    const aiInput  = row.querySelector('.col-input-autoincrement');
+
+    if (lenInput) {
+        lenInput.disabled = !lengthAllowed;
+        const lenGroup = lenInput.closest('.exp-group');
+        if (lenGroup) lenGroup.classList.toggle('field-disabled', !lengthAllowed);
+        if (!lengthAllowed) { lenInput.value = ''; colObj.length = null; }
+    }
+
+    if (aiInput) {
+        aiInput.disabled = !aiAllowed;
+        const aiRow = aiInput.closest('.toggle-row');
+        if (aiRow) aiRow.classList.toggle('field-disabled', !aiAllowed);
+        if (!aiAllowed && aiInput.checked) { aiInput.checked = false; colObj.auto_increment = false; }
+    }
+}
+
+/** Real-time conflict highlights for a single column row. */
+function updateRowConflicts(row, colObj) {
+    const pkNullConflict = colObj.is_primary && colObj.is_nullable;
+    const aiNullConflict = colObj.auto_increment && colObj.is_nullable;
+    const pkUqConflict   = colObj.is_primary && colObj.is_unique;
+
+    const nullRow = row.querySelector('.col-input-nullable')?.closest('.toggle-row');
+    const pkRow   = row.querySelector('.col-input-primary')?.closest('.toggle-row');
+    const uqRow   = row.querySelector('.col-input-unique')?.closest('.toggle-row');
+    const aiRow   = row.querySelector('.col-input-autoincrement')?.closest('.toggle-row');
+
+    if (nullRow) nullRow.classList.toggle('conflict', pkNullConflict || aiNullConflict);
+    if (pkRow)   pkRow.classList.toggle('conflict', pkNullConflict || pkUqConflict);
+    if (uqRow)   uqRow.classList.toggle('conflict', pkUqConflict);
+    if (aiRow)   aiRow.classList.toggle('conflict', aiNullConflict);
+}
+
+/** Validate a single column state object. Returns array of error strings. */
+function validateColState(col) {
+    const errors = [];
+    const label  = col.name ? `"${col.name}"` : '(unnamed column)';
+
+    if (!col.name?.trim())
+        errors.push(`${label}: Column name is required.`);
+    if (col.is_primary && col.is_nullable)
+        errors.push(`${label}: A primary key column cannot be nullable.`);
+    if (col.auto_increment && col.is_nullable)
+        errors.push(`${label}: AUTO_INCREMENT columns cannot be nullable.`);
+    if (col.length && !typeAllows(col.type, 'length'))
+        errors.push(`${label}: Length is not supported for type "${col.type}".`);
+
+    return errors;
+}
+
+
 // Seed columns from server
 let columns = {{ \Illuminate\Support\Js::from($table->columns->map(fn($c) => [
     'id'                  => $c->id,
@@ -284,6 +358,13 @@ async function saveSchema() {
     if (saveInProgress) return;
     const payload = buildPayload();
     if (!payload.name.trim()) { toast('Table name is required.', 'error'); return; }
+
+    // Frontend pre-save validation for all columns
+    const allErrors = columns.flatMap(col => validateColState(col));
+    if (allErrors.length) {
+        allErrors.forEach(e => toast(e, 'error'));
+        return;
+    }
 
     saveInProgress = true;
     btnManualSave.disabled = true;
@@ -501,6 +582,8 @@ function buildColumnRow(col) {
 
     attachRowListeners(row, col);
     updateBadges(row, col);
+    applyRowTypeConstraints(row, col);
+    updateRowConflicts(row, col);
     return row;
 }
 
@@ -517,11 +600,15 @@ function attachRowListeners(row, colObj) {
     row.querySelectorAll('input, select').forEach(input => {
         input.addEventListener('input', () => {
             readColFromRow(row, colObj);
+            applyRowTypeConstraints(row, colObj);
+            updateRowConflicts(row, colObj);
             updateBadges(row, colObj);
             onStateChange();
         });
         input.addEventListener('change', () => {
             readColFromRow(row, colObj);
+            applyRowTypeConstraints(row, colObj);
+            updateRowConflicts(row, colObj);
             updateBadges(row, colObj);
             onStateChange();
         });
@@ -730,6 +817,8 @@ document.addEventListener('keydown', (e) => {
         if (!col) return;
         row.dataset.tempid = col.id || ('_new_' + (++tempIdCounter));
         attachRowListeners(row, col);
+        applyRowTypeConstraints(row, col);
+        updateRowConflicts(row, col);
     });
     checkEmptyState();
     setStatus('saved', 'Saved');

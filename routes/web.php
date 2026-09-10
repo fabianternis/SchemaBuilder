@@ -21,6 +21,14 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/signup', [AuthController::class, 'showSignup'])->name('auth.signup');
     Route::post('/signup', [AuthController::class, 'signup']);
+
+    // ── GitHub OAuth ──────────────────────────────────────────────────────────
+    Route::get('/auth/github', [AuthController::class, 'redirectToGitHub'])->name('auth.github');
+    Route::get('/auth/github/callback', [AuthController::class, 'handleGitHubCallback'])->name('auth.github.callback');
+
+    // ── HackClub OAuth ────────────────────────────────────────────────────────
+    Route::get('/auth/hackclub', [AuthController::class, 'redirectToHackClub'])->name('auth.hackclub');
+    Route::get('/auth/hackclub/callback', [AuthController::class, 'handleHackClubCallback'])->name('auth.hackclub.callback');
 });
 
 Route::middleware('auth')->group(function () {
@@ -51,7 +59,8 @@ Route::middleware('auth')->group(function () {
 
         // IMPORTANT: Literal sub-routes must come BEFORE {table:name} wildcard to avoid conflicts
         Route::get('/{project:slug}/{database:name}/_tables', [SchemaController::class, 'tablesList'])->name('tables.list');
-        Route::get('/{project:slug}/{database:name}/export/{to?}', [SchemaController::class, 'export'])->name('export');
+        // Route::get('/{project:slug}/{database:name}/export/{to?}/{allow_empty_tables?}', [SchemaController::class, 'export'])->name('export');
+        Route::get('/{project:slug}/{database:name}/export/{to?}/', [SchemaController::class, 'export'])->name('export');
         Route::post('/{project:slug}/{database:name}/import', [SchemaController::class, 'import'])->name('import');
         Route::get('/{project:slug}/{database:name}/new', [SchemaController::class, 'createTable'])->name('table.create');
         Route::post('/{project:slug}/{database:name}/new', [SchemaController::class, 'storeTable'])->name('table.store');

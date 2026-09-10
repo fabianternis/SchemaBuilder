@@ -11,6 +11,7 @@ class PageController extends Controller
 
     public function dashboard()
     {
-        return view('pages.dashboard');
+        $projects = Auth()->user()->projects()->with('databases')->get();
+        return view('pages.dashboard', compact('projects'));
     }
 }

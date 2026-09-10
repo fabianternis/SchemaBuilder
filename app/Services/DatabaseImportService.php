@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\{SchemaDatabase as Database, SchemaTable as Table, SchemaColumn as Column};
+use App\Support\ColumnTypeRules;
 use Illuminate\Support\Facades\Auth;
 
 class DatabaseImportService
@@ -102,7 +103,7 @@ class DatabaseImportService
                     $rest   = substr($rest, strlen($lenMatch[0]));
                 }
 
-                $attrs = [
+                $attrs = $this->buildColumnAttrs([
                     'table_id'       => $table->id,
                     'name'           => $colName,
                     'type'           => $colType,
@@ -114,7 +115,7 @@ class DatabaseImportService
                     'default'        => null,
                     'on_cascade'     => null,
                     'order_index'    => $columnIndex++,
-                ];
+                ]);
 
                 // DEFAULT value
                 if (preg_match('/DEFAULT\s+\'([^\']*)\'/i', $rest, $defMatch)) {
@@ -180,7 +181,7 @@ class DatabaseImportService
                 $colName = $colData['name'] ?? null;
                 if (!$colName) continue;
 
-                $attrs = [
+                $attrs = $this->buildColumnAttrs([
                     'table_id'            => $table->id,
                     'name'                => $colName,
                     'type'                => $colData['type']            ?? 'varchar',
@@ -193,7 +194,7 @@ class DatabaseImportService
                     'on_cascade'          => $colData['on_cascade']       ?? null,
                     'referenced_table_id' => null, // resolved below
                     'order_index'         => $columnIndex++,
-                ];
+                ]);
 
                 // Attempt to resolve referenced_table_id by name within this DB
                 if (!empty($colData['referenced_table_id'])) {
@@ -275,7 +276,7 @@ class DatabaseImportService
 
             $yesno = fn(string $key) => strtolower($pad($key)) === 'yes';
 
-            $attrs = [
+            $attrs = $this->buildColumnAttrs([
                 'table_id'       => $table->id,
                 'name'           => $colName,
                 'type'           => $colType,
@@ -287,7 +288,7 @@ class DatabaseImportService
                 'default'        => ($v = $pad('default')) !== '' ? $v : null,
                 'on_cascade'     => ($v = $pad('on_cascade')) !== '' ? $v : null,
                 'order_index'    => $columnCounts[$tableName]++,
-            ];
+            ]);
 
             // Resolve reference by table name
             if ($refName = $pad('references_table')) {
@@ -310,6 +311,15 @@ class DatabaseImportService
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
+
+    /**
+     * Sanitise a raw column attribute array through the type-rules system
+     * before persisting to the database.
+     */
+    private function buildColumnAttrs(array $raw): array
+    {
+        return ColumnTypeRules::sanitise($raw);
+    }
 
     /**
      * Find or create a table by name within a database.
