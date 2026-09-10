@@ -29,11 +29,10 @@
         </div>
     </div>
 
-
-    <div class="section-card">
+    <div class="section-card quickstart-card">
         <div class="section-title">Quick Start</div>
-        <p style="margin-bottom: 1rem;">Create your first database schema or navigate to your projects to continue working.</p>
-        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+        <p class="quickstart-desc">Create your first database schema or navigate to your projects to continue working.</p>
+        <div class="quickstart-actions">
             <a href="{{ route('new') }}" class="btn-primary">
                 <x-heroicon-o-plus class="btn-icon-svg" /> New Database
             </a>
@@ -57,7 +56,7 @@
         @if($projects->isNotEmpty())
             <div class="dashboard-projects-list">
                 @foreach($projects as $project)
-                    <div class="dashboard-project-item">
+                    <div class="dashboard-project-card">
                         <div class="dashboard-project-header">
                             <div class="dashboard-project-title-group">
                                 <a href="{{ route('schema.project', $project) }}" class="project-name">
